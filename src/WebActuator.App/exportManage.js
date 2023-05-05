@@ -48,7 +48,7 @@ export function References() {
 }
 
 export async function SetReferences(references) {
-    exports.WebActuator.App.ExportManage.SetReferences(references);
+    await exports.WebActuator.App.ExportManage.SetReferences(references);
 }
 
 export function TryCompile(source, concurrentBuild) {

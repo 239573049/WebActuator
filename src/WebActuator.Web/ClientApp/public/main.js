@@ -1,5 +1,3 @@
-import exportManage from './exportManage.js'
+import * as exportManage from './exportManage.js'
 
 window.exportManage = exportManage;
-
-console.log(window);

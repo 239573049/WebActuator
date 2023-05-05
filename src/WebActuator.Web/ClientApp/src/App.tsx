@@ -3,13 +3,9 @@ import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
 import { Button, Card, Divider, Layout, Nav, Tree } from '@douyinfe/semi-ui';
 import MonacoEditor from 'react-monaco-editor';
-
-import Split from 'react-split'
 import { FileInfo, IFileSystem } from './uitls/IFileSystem';
 import { StorageFileSystem } from './uitls/StorageFileSystem';
 import { FileTreeModel } from './models/treeModel';
-import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
-import TreeNode from '@douyinfe/semi-ui/lib/es/tree/treeNode';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -28,17 +24,22 @@ export default class App extends Component {
       x: 0,
       y: 0,
       value: null
-    }
+    },
+    editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
+    monaco: null as unknown as typeof monacoEditor
   }
-
   constructor(props: {} | Readonly<{}>) {
     super(props);
+    React.createRef()
     FileSystem = new StorageFileSystem();
   }
 
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
     this.onLoad()
+    setTimeout(() => {
+      this.onInit()
+    }, 1000);
   }
 
   componentWillUnmount(): void {
@@ -76,10 +77,14 @@ export default class App extends Component {
 
   editorDidMount(editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: typeof monacoEditor) {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-
+      this.onRunCode()
     });
 
     editor.focus();
+    this.setState({
+      editor: editor,
+      monaco: monaco
+    })
   }
 
   onChange(newValue: any, e: any) {
@@ -181,6 +186,30 @@ export default class App extends Component {
     this.onLoad()
   }
 
+  onRunCode() {
+    var { editor, code } = this.state;
+    let Window = window as any;
+    Window.exportManage.RunSubmission(code, false);
+  }
+
+  async onInit() {
+    let Window = window as any;
+    let assembly = [
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Buffers.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Collections.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Core.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Expressions.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Parallel.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/mscorlib.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Runtime.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Net.Http.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
+    await Window.exportManage.SetReferences(assembly);
+  }
+
   render() {
     var { code, contextMenu, fileMenu, data } = this.state;
 
@@ -225,7 +254,7 @@ export default class App extends Component {
               }} className='menu'>
               <Button block theme='borderless' size='small' onClick={() => this.onCreateFile()}>新建文件</Button>
               <Button block theme='borderless' size='small' onClick={() => this.onCreateDirectory()}>新建文件夹</Button>
-              {fileMenu.value&&<Button  block theme='borderless' size='small' >重命名</Button>}
+              {fileMenu.value && <Button block theme='borderless' size='small' >重命名</Button>}
             </Card>
           )}
         </Sider>
@@ -252,7 +281,7 @@ export default class App extends Component {
                   left: contextMenu.x,
                   backgroundColor: 'white'
                 }} className='menu'>
-                <Button theme='borderless' size='small'>执行c#程序</Button>
+                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行c#程序</Button>
               </Card>
             )}
           </Content>
