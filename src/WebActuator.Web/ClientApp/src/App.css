@@ -14,3 +14,11 @@ body {
 #root {
     height: 100%;
 }
+
+.menu{
+    position: absolute;
+}
+
+.menu .semi-card-body{
+    padding: 3px !important;
+}
