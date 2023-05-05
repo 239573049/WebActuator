@@ -11,7 +11,7 @@ setModuleImports('exportManage.js', {
             console.log('Exception', json)
         },
         Diagnostic: (json) => {
-            console.log('Diagnostic', json)
+            console.log('Diagnostic', JSON.parse(json))
         }
     }
 });
@@ -48,7 +48,7 @@ export function References() {
 }
 
 export async function SetReferences(references) {
-    await exports.WebActuator.App.ExportManage.SetReferences(references);
+    await exports.WebActuator.App.ExportManage.SetReferencesAsync(references);
 }
 
 export function TryCompile(source, concurrentBuild) {

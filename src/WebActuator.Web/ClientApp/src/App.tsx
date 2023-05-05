@@ -39,7 +39,7 @@ export default class App extends Component {
     this.onLoad()
     setTimeout(() => {
       this.onInit()
-    }, 1000);
+    }, 2000);
   }
 
   componentWillUnmount(): void {
@@ -206,6 +206,7 @@ export default class App extends Component {
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll",
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Runtime.dll",
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Net.Http.dll",
+      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Private.CoreLib.dll",
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
     await Window.exportManage.SetReferences(assembly);
   }
