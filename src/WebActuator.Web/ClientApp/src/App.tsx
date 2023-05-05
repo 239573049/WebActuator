@@ -75,7 +75,7 @@ export default class App extends Component {
               justifyContent: "space-between",
               padding: "20px",
               color: "var(--semi-color-text-2)",
-            }}>尾部</Footer>
+            }}>.NET 7 Web Assembly</Footer>
         </Layout>
       </div>
     )
