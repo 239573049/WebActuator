@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\Net\WebActuator\src\WebActuator.Web\bin\Release\net7.0\publish\</_PublishTargetUrl>
+    <History>True|2023-05-05T11:18:15.4314678Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
