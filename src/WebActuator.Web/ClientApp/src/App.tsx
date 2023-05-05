@@ -117,7 +117,6 @@ export default class App extends Component {
 
   updateTreeData(list: any[], key: any, children: any): any {
     return list.map(node => {
-      debugger;
       if (node.key === key) {
         return { ...node, children };
       }
@@ -144,11 +143,6 @@ export default class App extends Component {
             icon: undefined
           } as FileTreeModel;
         });
-
-        console.log('====================================');
-        console.log(result);
-        console.log(treeNode);
-        console.log('====================================');
 
         this.setState({
           data: [...this.updateTreeData(this.state.data, treeNode.key, result)]
@@ -187,7 +181,8 @@ export default class App extends Component {
   }
 
   onRunCode() {
-    var { editor, code } = this.state;
+    var { editor, code, } = this.state;
+    
     let Window = window as any;
     Window.exportManage.RunSubmission(code, false);
   }
@@ -212,7 +207,7 @@ export default class App extends Component {
   }
 
   render() {
-    var { code, contextMenu, fileMenu, data } = this.state;
+    var { code, contextMenu, fileMenu, data,editor } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
@@ -241,7 +236,17 @@ export default class App extends Component {
             defaultExpandAll
             onContextMenu={(event, tree: any) => this.handleContextMenuFile(event, tree)}
             directory
-            onChange={(value: any) => console.log(value)}
+            onChange={(value: any) => {
+              try{
+                var code=FileSystem.readFile(value);
+                 this.setState({
+                  code
+                 })
+                 editor.setValue(code)
+              }catch{
+
+              }
+            }}
             loadData={(tree: any) => this.onLoadData(tree)}
             style={style}
           />
