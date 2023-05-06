@@ -1,7 +1,7 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography } from '@douyinfe/semi-ui';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal } from '@douyinfe/semi-ui';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
@@ -82,7 +82,23 @@ export default class App extends Component {
   state = {
     code: 'Console.WriteLine("Hello World");',
     logContent: '',
+    depend: false,
     searchWords: ["info", "error", "warning", "debug", "trace"],
+    assembly: "",
+    assemblys: [
+      "http://assembly.tokengo.top:8888/System.dll",
+      "http://assembly.tokengo.top:8888/System.Buffers.dll",
+      "http://assembly.tokengo.top:8888/System.Collections.dll",
+      "http://assembly.tokengo.top:8888/System.Core.dll",
+      "http://assembly.tokengo.top:8888/System.Linq.Expressions.dll",
+      "http://assembly.tokengo.top:8888/System.Linq.Parallel.dll",
+      "http://assembly.tokengo.top:8888/mscorlib.dll",
+      "http://assembly.tokengo.top:8888/System.Linq.dll",
+      "http://assembly.tokengo.top:8888/System.Console.dll",
+      "http://assembly.tokengo.top:8888/System.Runtime.dll",
+      "http://assembly.tokengo.top:8888/System.Net.Http.dll",
+      "http://assembly.tokengo.top:8888/System.Private.CoreLib.dll",
+      "http://assembly.tokengo.top:8888/System.Console.dll"],
     contextMenu: {
       x: -1000,
       y: -1000
@@ -180,26 +196,31 @@ export default class App extends Component {
 
   async onInit() {
     let Window = window as any;
-    let assembly = [
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Buffers.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Collections.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Core.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Expressions.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Parallel.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/mscorlib.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Runtime.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Net.Http.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Private.CoreLib.dll",
-      "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
+    var { assemblys } = this.state;
     await Window.exportManage.Init();
-    await Window.exportManage.SetReferences(assembly);
+    await Window.exportManage.SetReferences(assemblys);
+  }
+
+  async onAddAssembly() {
+    var { assembly, assemblys } = this.state;
+    Notification.info({
+      title: 'Info',
+      content: '加载程序集中...',
+    })
+
+    await (window as any).exportManage.SetReferences(['assemblys']);
+
+    Notification.success({
+      title: 'Success',
+      content: '加载程序集成功',
+    })
+
+    assemblys.push(assembly);
+
   }
 
   render() {
-    var { code, contextMenu, treeData, editor, logContent, searchWords } = this.state;
+    var { code, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
@@ -224,6 +245,9 @@ export default class App extends Component {
             Web IDE
           </div>
           <div>
+            <div><Button block theme='borderless' onClick={() => this.setState({
+              depend: true
+            })}>依赖</Button></div>
             <Tree onDoubleClick={(e, t) => {
               if (t.value) {
 
@@ -250,7 +274,7 @@ export default class App extends Component {
           <Content style={{
             height: 'max-content',
           }}>
-            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%',maxHeight:'100%' }}>
+            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
               <MonacoEditor
                 language="csharp"
                 theme="vs-dark"
@@ -281,6 +305,25 @@ export default class App extends Component {
               color: "var(--semi-color-text-2)",
             }}>.NET 7 Web Assembly</Footer>
         </Layout>
+        <Modal
+          header={null}
+          visible={depend}
+          onCancel={() => this.setState({ depend: false })}
+          footer={[]}
+        >
+          <h3 style={{ textAlign: 'center', fontSize: 24, margin: 40 }}>编译依赖项</h3>
+          <Card>
+            {assemblys.map(x => {
+              return (
+                <div style={{ marginBottom: 10 }}>
+                  <span>{x}</span>
+                </div>
+              )
+            })}
+          </Card>
+          <Input value={assembly} onChange={(e) => this.setState({ assembly: e })}></Input>
+          <Button block onClick={()=>this.onAddAssembly()}>添加</Button>
+        </Modal>
       </Layout >
     )
   }

@@ -21,7 +21,10 @@ export async function Init() {
                 }
             },
             Diagnostic: (json) => {
-                console.log('Diagnostic', JSON.parse(json))
+                try {
+                    window.Diagnostic(json)
+                } catch (error) {
+                }
             }, WriteLine: (message) => {
                 try {
                     window.OnWriteLine(message)
