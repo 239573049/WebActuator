@@ -1,10 +1,5 @@
 import { dotnet } from './dotnet.js'
 
-
-window.OnWriteLine = (message) => {
-    console.log('WriteLine', message)
-}
-
 export async function Init() {
     const { setModuleImports, getAssemblyExports, getConfig, Module } = await dotnet
         .withDiagnosticTracing(false)
@@ -14,14 +9,16 @@ export async function Init() {
     setModuleImports('exportManage.js', {
         ExportManage: {
             Exception: (json) => {
-                console.log('Exception', json)
                 try {
                     window.OnException(json)
                 } catch (error) {
                 }
             },
             Diagnostic: (json) => {
-                console.log('Diagnostic', JSON.parse(json))
+                try {
+                    window.Diagnostic(json)
+                } catch (error) {
+                }
             }, WriteLine: (message) => {
                 try {
                     window.OnWriteLine(message)
