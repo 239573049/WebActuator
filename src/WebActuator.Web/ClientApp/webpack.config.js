@@ -52,7 +52,6 @@ module.exports = {
     },
     plugins: [
         new MonacoWebpackPlugin({
-            // available options are documented at https://github.com/microsoft/monaco-editor/blob/main/webpack-plugin/README.md#options
             languages: ['json', 'csharp', 'java', 'javascript', 'typescript', 'python', 'html', 'css', 'xml', 'markdown']
         })
     ].filter(Boolean)

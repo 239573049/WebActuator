@@ -1,8 +1,8 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Divider, Input, Layout, Nav, Tree, Typography } from '@douyinfe/semi-ui';
-import MonacoEditor from 'react-monaco-editor';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography } from '@douyinfe/semi-ui';
+import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
 const { Footer, Sider, Content } = Layout;
@@ -77,9 +77,12 @@ window.self.MonacoEnvironment = {
   }
 };
 
+
 export default class App extends Component {
   state = {
     code: 'Console.WriteLine("Hello World");',
+    logContent: '',
+    searchWords: ["info", "error", "warning", "debug", "trace"],
     contextMenu: {
       x: -1000,
       y: -1000
@@ -110,11 +113,18 @@ export default class App extends Component {
   }
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    React.createRef()
+    React.createRef();
   }
 
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
+
+    (window as any).OnWriteLine = (message: string) => {
+      Notification.info({
+        title: 'Info',
+        content: message,
+      })
+    }
 
     setTimeout(() => {
       this.onInit()
@@ -184,11 +194,12 @@ export default class App extends Component {
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Net.Http.dll",
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Private.CoreLib.dll",
       "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
+    await Window.exportManage.Init();
     await Window.exportManage.SetReferences(assembly);
   }
 
   render() {
-    var { code, contextMenu, treeData, editor } = this.state;
+    var { code, contextMenu, treeData, editor, logContent, searchWords } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
@@ -225,8 +236,10 @@ export default class App extends Component {
               treeData={treeData}
               defaultValue={'1'}
               onChange={(e) => {
-                console.log(e);
-
+                let result = value.find(x => x.name === e);
+                if (result) {
+                  editor.setValue(result.value)
+                }
               }}
               renderLabel={renderLabel}>
             </Tree>
@@ -237,11 +250,12 @@ export default class App extends Component {
           <Content style={{
             height: 'max-content',
           }}>
-            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%' }}>
+            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%',maxHeight:'100%' }}>
               <MonacoEditor
                 language="csharp"
                 theme="vs-dark"
                 value={code}
+                height='calc(100vh - 61px)'
                 options={options}
                 onChange={(value, e) => this.onChange(value, e)}
                 editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}

@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
@@ -88,4 +89,7 @@ public partial class ExportManage
 
     [JSImport("ExportManage.Exception", "exportManage.js")]
     internal static partial void Exception(string json);
+
+    [JSImport("ExportManage.WriteLine", "exportManage.js")]
+    internal static partial void WriteLine(string json);
 }
