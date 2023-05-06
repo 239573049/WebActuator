@@ -14,9 +14,6 @@ class StorageFileSystem implements IFileSystem {
         } else {
             this.createDirectory(null, "Demo");
         }
-        console.log('====================================');
-        console.log('StorageFileSystem', StorageFileSystem.FileInfos);
-        console.log('====================================');
     }
     combine(path1: string, path2: string, path3?: string, path4?: string): string {
         let value = path1 + "/" + path2;
@@ -49,7 +46,7 @@ class StorageFileSystem implements IFileSystem {
 
     deleteDirectory(path: string): void {
         var index = StorageFileSystem.FileInfos.findIndex(x => x.path === path);
-        if (index == -1) {
+        if (index === -1) {
             throw new Error("Directory not exists");
         }
         StorageFileSystem.FileInfos.splice(index, 1);
@@ -83,14 +80,14 @@ class StorageFileSystem implements IFileSystem {
     }
     readFile(path: string): string {
         var index = StorageFileSystem.FileInfos.findIndex(x => x.path === path);
-        if (index == -1) {
+        if (index === -1) {
             throw new Error("File not exists");
         }
         return this.readContent(StorageFileSystem.FileInfos[index].path);
     }
     writeFile(path: string, content: string): void {
         var index = StorageFileSystem.FileInfos.findIndex(x => x.path === path);
-        if (index == -1) {
+        if (index === -1) {
             throw new Error("File not exists");
         }
         StorageFileSystem.FileInfos[index].size = content.length;
@@ -100,7 +97,7 @@ class StorageFileSystem implements IFileSystem {
     }
     deleteFile(path: string): void {
         var index = StorageFileSystem.FileInfos.findIndex(x => x.path === path);
-        if (index == -1) {
+        if (index === -1) {
             throw new Error("File not exists");
         }
         StorageFileSystem.FileInfos.splice(index, 1);
@@ -115,7 +112,7 @@ class StorageFileSystem implements IFileSystem {
     }
 
     exists(path: string | null): boolean {
-        return StorageFileSystem.FileInfos.findIndex(x => x.path === path) != -1;
+        return StorageFileSystem.FileInfos.findIndex(x => x.path === path) !== -1;
     }
 
     getDirectorys(path: string | null): FileInfo[] {

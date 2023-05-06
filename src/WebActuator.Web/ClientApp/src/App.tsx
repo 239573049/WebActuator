@@ -1,72 +1,130 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Divider, Layout, Nav, Tree } from '@douyinfe/semi-ui';
+import { Button, Card, Divider, Input, Layout, Nav, Tree, Typography } from '@douyinfe/semi-ui';
 import MonacoEditor from 'react-monaco-editor';
-import { FileInfo, IFileSystem } from './uitls/IFileSystem';
-import { StorageFileSystem } from './uitls/StorageFileSystem';
-import { FileTreeModel } from './models/treeModel';
+import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
+import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
+const { Footer, Sider, Content } = Layout;
 
-const { Header, Footer, Sider, Content } = Layout;
+const body = document.body;
+body.setAttribute('theme-mode', 'dark');
 
-let FileSystem: IFileSystem;
+
+const renderLabel = (label: any, item: any) => (
+  <div style={{ display: 'flex' }}>
+    {!item.isUpdate ? <span>{label}</span> : <Input value={label} />}
+  </div>
+);
+
+const value = [{
+  name: 'Hell word.cs',
+  value: `Console.WriteLine("Hello World");`
+}, {
+  name: 'Rectangle.cs',
+  value: `
+using System;
+
+Rectangle r = new Rectangle();
+r.Acceptdetails();
+r.Display();
+Console.ReadLine();
+class Rectangle
+{
+    // 成员变量
+    double length;
+    double width;
+    public void Acceptdetails()
+    {
+        length = 4.5;
+        width = 3.5;
+    }
+    public double GetArea()
+    {
+        return length * width;
+    }
+    public void Display()
+    {
+        Console.WriteLine("Length: {0}", length);
+        Console.WriteLine("Width: {0}", width);
+        Console.WriteLine("Area: {0}", GetArea());
+    }
+}
+`
+}, {
+  name: 'Sizeof.cs',
+  value: `Console.WriteLine("Size of int: {0}", sizeof(int));`
+}]
+
+window.self.MonacoEnvironment = {
+  getWorkerUrl: function (moduleId: any, label: any) {
+    if (label === 'json') {
+      return './json.worker.bundle.js';
+    }
+    if (label === 'csharp') {
+      return './csharp.worker.bundle.js';
+    }
+    if (label === 'css' || label === 'scss' || label === 'less') {
+      return './css.worker.bundle.js';
+    }
+    if (label === 'html' || label === 'handlebars' || label === 'razor') {
+      return './html.worker.bundle.js';
+    }
+    if (label === 'typescript' || label === 'javascript') {
+      return './ts.worker.bundle.js';
+    }
+    return './editor.worker.bundle.js';
+  }
+};
 
 export default class App extends Component {
   state = {
     code: 'Console.WriteLine("Hello World");',
-    fileInfo: null as FileInfo | null,
-    data: [] as FileTreeModel[],
     contextMenu: {
-      x: 0,
-      y: 0
+      x: -1000,
+      y: -1000
     },
     fileMenu: {
-      x: 0,
-      y: 0,
+      x: -1000,
+      y: -1000,
       value: null
     },
+    treeData: [
+      {
+        key: '1',
+        label: 'Hell word.cs',
+        isLeaf: true,
+        value: 'Hell word.cs',
+        isUpdate: false
+      },
+      {
+        key: '2',
+        label: 'Rectangle.cs',
+        isLeaf: true,
+        value: 'Rectangle.cs',
+        isUpdate: false
+      }
+    ] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
     monaco: null as unknown as typeof monacoEditor
   }
   constructor(props: {} | Readonly<{}>) {
     super(props);
     React.createRef()
-    FileSystem = new StorageFileSystem();
   }
 
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
-    this.onLoad()
+
     setTimeout(() => {
       this.onInit()
-    }, 2000);
+    }, 3000);
   }
 
   componentWillUnmount(): void {
     document.removeEventListener('click', (e) => this.handleClick());
   }
 
-  onLoad() {
-    var { fileInfo } = this.state;
-    let result = FileSystem.getDirectorys(fileInfo ? fileInfo?.parentPath : null)
-    var data = result.map((file: FileInfo) => {
-      let node: FileTreeModel = {
-        key: file.path,
-        label: file.name,
-        isLeaf: !file.isDirectory,
-        children: file.isDirectory ? [] : undefined,
-        file: file,
-        value: '',
-        icon: undefined
-      }
-      return node;
-    });
-    if (data) {
-      this.setState({
-        data: data
-      })
-    }
-  }
 
   handleClick() {
     this.setState({
@@ -103,86 +161,9 @@ export default class App extends Component {
     })
   }
 
-  handleContextMenuFile(event: any, tree: FileTreeModel) {
-    event.preventDefault();
-    this.setState({
-      fileMenu: {
-        x: event.clientX,
-        y: event.clientY,
-        value: tree
-      },
-      fileInfo: tree.file
-    })
-  }
-
-  updateTreeData(list: any[], key: any, children: any): any {
-    return list.map(node => {
-      if (node.key === key) {
-        return { ...node, children };
-      }
-      if (node.children) {
-        return { ...node, children: this.updateTreeData(node.children, key, children) };
-      }
-      return node;
-    });
-  }
-
-  onLoadData = (treeNode: FileTreeModel) => {
-    return new Promise<void>(resolve => {
-      let files = FileSystem.getDirectorys(treeNode!.file.key);
-
-      if (files) {
-        var result = files.map((file: FileInfo) => {
-          return {
-            key: file.path,
-            label: file.name,
-            isLeaf: !file.isDirectory,
-            children: file.isDirectory ? [] : undefined,
-            file: file,
-            value: file.key,
-            icon: undefined
-          } as FileTreeModel;
-        });
-
-        this.setState({
-          data: [...this.updateTreeData(this.state.data, treeNode.key, result)]
-        })
-      }
-      resolve();
-    })
-  }
-
-  onCreateFile() {
-    var { fileInfo } = this.state;
-
-    var path = null;
-    if (fileInfo?.isDirectory) {
-      path = fileInfo.path;
-    } else {
-      path = fileInfo?.parentPath;
-    }
-    path = path ? path : null
-    FileSystem.createFile(path, '新建文件.cs', '');
-    this.onLoad()
-  }
-
-  onCreateDirectory() {
-    var { fileInfo } = this.state;
-
-    var path = null;
-    if (fileInfo?.isDirectory) {
-      path = fileInfo.path;
-    } else {
-      path = fileInfo?.parentPath;
-    }
-
-    FileSystem.createDirectory(path ? path : null, '新建文件夹');
-    this.onLoad()
-  }
-
   onRunCode() {
     var { editor, code, } = this.state;
-    
+
     let Window = window as any;
     Window.exportManage.RunSubmission(code, false);
   }
@@ -207,7 +188,7 @@ export default class App extends Component {
   }
 
   render() {
-    var { code, contextMenu, fileMenu, data,editor } = this.state;
+    var { code, contextMenu, treeData, editor } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
@@ -231,38 +212,25 @@ export default class App extends Component {
           }}>
             Web IDE
           </div>
-          <Tree
-            treeData={data}
-            defaultExpandAll
-            onContextMenu={(event, tree: any) => this.handleContextMenuFile(event, tree)}
-            directory
-            onChange={(value: any) => {
-              try{
-                var code=FileSystem.readFile(value);
-                 this.setState({
-                  code
-                 })
-                 editor.setValue(code)
-              }catch{
+          <div>
+            <Tree onDoubleClick={(e, t) => {
+              if (t.value) {
 
+                let result = value.filter(x => x.name === t.value);
+                if (result) {
+                  editor.setValue(result[0].value)
+                }
               }
             }}
-            loadData={(tree: any) => this.onLoadData(tree)}
-            style={style}
-          />
-          {fileMenu?.x > 0 && (
-            <Card
-              style={{
-                top: fileMenu.y,
-                left: fileMenu.x,
-                width: "80px",
-                backgroundColor: 'white'
-              }} className='menu'>
-              <Button block theme='borderless' size='small' onClick={() => this.onCreateFile()}>新建文件</Button>
-              <Button block theme='borderless' size='small' onClick={() => this.onCreateDirectory()}>新建文件夹</Button>
-              {fileMenu.value && <Button block theme='borderless' size='small' >重命名</Button>}
-            </Card>
-          )}
+              treeData={treeData}
+              defaultValue={'1'}
+              onChange={(e) => {
+                console.log(e);
+
+              }}
+              renderLabel={renderLabel}>
+            </Tree>
+          </div>
         </Sider>
         <Layout
           className="web-layout">
@@ -271,7 +239,6 @@ export default class App extends Component {
           }}>
             <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%' }}>
               <MonacoEditor
-                height={'100%'}
                 language="csharp"
                 theme="vs-dark"
                 value={code}
@@ -287,7 +254,7 @@ export default class App extends Component {
                   left: contextMenu.x,
                   backgroundColor: 'white'
                 }} className='menu'>
-                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行c#程序</Button>
+                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
               </Card>
             )}
           </Content>
@@ -295,11 +262,12 @@ export default class App extends Component {
             style={{
               justifyContent: "space-between",
               padding: "20px",
+              backgroundColor: 'var(--semi-color-bg-1)',
               textAlign: "center",
               color: "var(--semi-color-text-2)",
             }}>.NET 7 Web Assembly</Footer>
         </Layout>
-      </Layout>
+      </Layout >
     )
   }
 }
