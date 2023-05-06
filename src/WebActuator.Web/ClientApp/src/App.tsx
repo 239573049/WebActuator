@@ -5,6 +5,7 @@ import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tr
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
+import { DiagnosticDto, DiagnosticSeverity } from './models/exportManage';
 const { Footer, Sider, Content } = Layout;
 
 const body = document.body;
@@ -140,6 +141,26 @@ export default class App extends Component {
         title: 'Info',
         content: message,
       })
+    }
+
+    (window as any).Diagnostic = (json: string) => {
+      var diagnostic = JSON.parse(json) as DiagnosticDto[];
+      diagnostic.forEach((item: DiagnosticDto) => {
+        console.log(item);
+        if (item.Severity === DiagnosticSeverity.Error) {
+          Notification.error({
+            title: item.Code,
+            content: item.Message,
+            duration: 10,
+          })
+        } else if (item.Severity === DiagnosticSeverity.Warning) {
+          Notification.warning({
+            title: item.Code,
+            content: item.Message,
+            duration: 10,
+          })
+        }
+      });
     }
 
     setTimeout(() => {
@@ -322,7 +343,7 @@ export default class App extends Component {
             })}
           </Card>
           <Input value={assembly} onChange={(e) => this.setState({ assembly: e })}></Input>
-          <Button block onClick={()=>this.onAddAssembly()}>添加</Button>
+          <Button block onClick={() => this.onAddAssembly()}>添加</Button>
         </Modal>
       </Layout >
     )
