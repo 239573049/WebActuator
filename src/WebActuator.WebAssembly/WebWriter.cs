@@ -53,4 +53,37 @@ public class WebWriter : StreamWriter
         await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg0));
     }
 
+    public override async void WriteLine([StringSyntax("CompositeFormat")] string format, params object?[] arg)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg));
+    }
+
+    public override async void WriteLine(double value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+    }
+
+    public override async void WriteLine(decimal value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+    }
+    public override async void WriteLine(float value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+    }
+
+    public override async void WriteLine(int value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+    }
+
+    public override async void WriteLine(long value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+    }
+
+    public override async void WriteLine(object? value)
+    {
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value);
+    }
 }

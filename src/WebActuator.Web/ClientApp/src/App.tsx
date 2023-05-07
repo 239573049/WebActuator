@@ -85,9 +85,37 @@ export default class App extends Component {
       },
       {
         key: '2',
-        label: 'Rectangle.cs',
+        label: 'Calculator.cs',
         isLeaf: true,
-        value: 'Rectangle.cs',
+        value: 'Calculator.cs',
+        isUpdate: false
+      },
+      {
+        key: '3',
+        label: 'StudentAchievement.cs',
+        isLeaf: true,
+        value: 'StudentAchievement.cs',
+        isUpdate: false
+      },
+      {
+        key: '4',
+        label: '乘法表.cs',
+        isLeaf: true,
+        value: '乘法表.cs',
+        isUpdate: false
+      },
+      {
+        key: '5',
+        label: '判断偶数.cs',
+        isLeaf: true,
+        value: '判断偶数.cs',
+        isUpdate: false
+      },
+      {
+        key: '6',
+        label: '算和.cs',
+        isLeaf: true,
+        value: '算和.cs',
         isUpdate: false
       }] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
@@ -103,7 +131,7 @@ export default class App extends Component {
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
 
-    (window as any).OnWriteLine = (message: string) => {
+    (window as any).WriteLine = (message: string) => {
       log += message + '\n';
       this.setState({
         logContent: log
@@ -184,7 +212,7 @@ export default class App extends Component {
       content: '加载程序集中...',
     })
 
-    await (window as any).exportManage.SetReferences(['assemblys']);
+    await (window as any).exportManage.SetReferences([assembly]);
 
     Notification.success({
       title: 'Success',

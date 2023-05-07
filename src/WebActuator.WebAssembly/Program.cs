@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
 using WebActuator.WebAssembly;
 
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 
