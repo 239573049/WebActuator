@@ -174,7 +174,6 @@ export default class App extends Component {
   async onInit() {
     let Window = window as any;
     var { assemblys } = this.state;
-    await Window.exportManage.Init();
     await Window.exportManage.SetReferences(assemblys);
   }
 
