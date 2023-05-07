@@ -48,6 +48,7 @@ export default class App extends Component {
   state = {
     code: 'Console.WriteLine("Hello World");',
     logContent: '',
+    errprContent: '',
     depend: false,
     searchWords: ["info", "error", "warning", "debug", "trace"],
     assembly: "",
@@ -77,9 +78,9 @@ export default class App extends Component {
     treeData: [
       {
         key: '1',
-        label: 'Hell word.cs',
+        label: 'Hello World.cs',
         isLeaf: true,
-        value: 'Hell word.cs',
+        value: 'Hello World.cs',
         isUpdate: false
       },
       {
@@ -112,20 +113,9 @@ export default class App extends Component {
     (window as any).Diagnostic = (json: string) => {
       var diagnostic = JSON.parse(json) as DiagnosticDto[];
       diagnostic.forEach((item: DiagnosticDto) => {
-        console.log(item);
-        if (item.Severity === DiagnosticSeverity.Error) {
-          Notification.error({
-            title: item.Code,
-            content: item.Message,
-            duration: 10,
-          })
-        } else if (item.Severity === DiagnosticSeverity.Warning) {
-          Notification.warning({
-            title: item.Code,
-            content: item.Message,
-            duration: 10,
-          })
-        }
+        this.setState((prevState: any) => ({
+          errprContent: prevState.errprContent + item.Code +":"+ item.Message + '\n'
+        }))
       });
     }
 
@@ -207,17 +197,11 @@ export default class App extends Component {
   }
 
   render() {
-    var { code, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
+    var { code, errprContent, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
       automaticLayout: true,
-    };
-
-    const style = {
-      width: '200px',
-      height: "calc(80% - 120px)",
-      border: '1px solid var(--semi-color-border)'
     };
 
     return (
@@ -289,11 +273,10 @@ export default class App extends Component {
                   {logContent}
                 </code>
               </TabPane>
-              <TabPane tab="控制台" itemKey="2" style={{ overflow: 'auto' }}>
-                控制台
-              </TabPane>
-              <TabPane tab="错误" itemKey="3" style={{ overflow: 'auto' }}>
-                错误
+              <TabPane tab="错误" itemKey="2" style={{ overflow: 'auto', maxHeight: '100px' }}>
+                <code style={{ whiteSpace: 'pre-wrap',color:'red' }}>
+                  {errprContent}
+                </code>
               </TabPane>
             </Tabs>
           </Footer>
