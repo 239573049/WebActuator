@@ -25,7 +25,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-3cNdn4bnJeo0YDm55a4YJbuZIp+IBjyahqbUUJYFGD0=",
+      "hash": "sha256-pK\/MZHiiasDdWY+vYch2V85rRw0H6ZXUxp+24RUO8B4=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -449,5 +449,5 @@
       "url": "manifest.json"
     }
   ],
-  "version": "njAUj5\/e"
+  "version": "ZIY5\/vkD"
 };
