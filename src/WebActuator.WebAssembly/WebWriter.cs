@@ -15,7 +15,6 @@ public class WebWriter : StreamWriter
     public override async Task WriteAsync(string value)
     {
         await JSRuntime.InvokeVoidAsync("OnWriteLine", value);
-        await Task.CompletedTask;
     }
 
     public override async void Write(string? value)
@@ -25,12 +24,12 @@ public class WebWriter : StreamWriter
 
     public override async void WriteLine(string value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value);
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value+"\n");
     }
 
     public override async void WriteLine(bool value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value);
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
 
     public override async void Write(decimal value)
@@ -50,40 +49,41 @@ public class WebWriter : StreamWriter
 
     public override async void WriteLine([StringSyntax("CompositeFormat")] string format, object arg0)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg0));
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg0) + "\n");
     }
 
     public override async void WriteLine([StringSyntax("CompositeFormat")] string format, params object?[] arg)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg));
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", string.Format(format, arg) + "\n");
     }
 
     public override async void WriteLine(double value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
 
     public override async void WriteLine(decimal value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
     public override async void WriteLine(float value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
 
     public override async void WriteLine(int value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
 
     public override async void WriteLine(long value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value.ToString());
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
 
     public override async void WriteLine(object? value)
     {
-        await JSRuntime.InvokeVoidAsync("OnWriteLine", value);
+        await JSRuntime.InvokeVoidAsync("OnWriteLine", value + "\n");
     }
+
 }

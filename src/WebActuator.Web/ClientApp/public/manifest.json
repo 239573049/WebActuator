@@ -1,6 +1,6 @@
 {
-  "name": "WebActuator.WebAssembly",
-  "short_name": "WebActuator.WebAssembly",
+  "name": "c#在线编辑器",
+  "short_name": "c#在线编辑器",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",

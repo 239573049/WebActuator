@@ -1,15 +1,38 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane } from '@douyinfe/semi-ui';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane, Upload } from '@douyinfe/semi-ui';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
-import { DiagnosticDto, DiagnosticSeverity } from './models/exportManage';
+import { DiagnosticDto } from './models/exportManage';
 import axios from 'axios';
 
 const { Footer, Sider, Content } = Layout;
 
+let assemblys = [];
+
+if (localStorage.getItem('assemblys')) {
+  assemblys = JSON.parse(localStorage.getItem('assemblys') as string);
+} else {
+  assemblys = [
+    "https://assembly.tokengo.top:8843/System.dll",
+    "https://assembly.tokengo.top:8843/System.Buffers.dll",
+    "https://assembly.tokengo.top:8843/System.Collections.dll",
+    "https://assembly.tokengo.top:8843/System.Core.dll",
+    "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
+    "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
+    "https://assembly.tokengo.top:8843/mscorlib.dll",
+    "https://assembly.tokengo.top:8843/System.Linq.dll",
+    "https://assembly.tokengo.top:8843/System.Console.dll",
+    "https://assembly.tokengo.top:8843/System.Runtime.dll",
+    "https://assembly.tokengo.top:8843/System.Net.Http.dll",
+    "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
+    "https://assembly.tokengo.top:8843/System.Console.dll"]
+
+  // 初次加载默认加载这些程序集
+  localStorage.setItem('assemblys', JSON.stringify(assemblys));
+}
 
 const body = document.body;
 body.setAttribute('theme-mode', 'dark');
@@ -137,16 +160,13 @@ export default class App extends Component {
   }
   constructor(props: {} | Readonly<{}>) {
     super(props);
-
-
-    React.createRef();
   }
 
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
 
     (window as any).WriteLine = (message: string) => {
-      log += message + '\n';
+      log += message;
       this.setState({
         logContent: log
       })
@@ -156,7 +176,7 @@ export default class App extends Component {
       var diagnostic = JSON.parse(json) as DiagnosticDto[];
       diagnostic.forEach((item: DiagnosticDto) => {
         this.setState((prevState: any) => ({
-          errprContent: prevState.errprContent + item.Code +":"+ item.Message + '\n'
+          errprContent: prevState.errprContent + item.Code + ":" + item.Message
         }))
       });
     }
@@ -219,14 +239,19 @@ export default class App extends Component {
     await Window.exportManage.SetReferences(assemblys);
   }
 
-  async onAddAssembly() {
+  async onAddAssembly(datas: any[] | null = null) {
     var { assembly, assemblys } = this.state;
     Notification.info({
       title: 'Info',
       content: '加载程序集中...',
     })
-
-    await (window as any).exportManage.SetReferences([assembly]);
+    if (datas) {
+      console.log(datas);
+      await (window as any).exportManage.SetReferences(datas);
+    } else {
+      console.log(assembly);
+      await (window as any).exportManage.SetReferences([assembly]);
+    }
 
     Notification.success({
       title: 'Success',
@@ -234,7 +259,37 @@ export default class App extends Component {
     })
 
     assemblys.push(assembly);
+    localStorage.setItem('assemblys', JSON.stringify(assemblys));
+  }
 
+  onRemoveAssembly() {
+    var { assemblys } = this.state;
+    assemblys = [
+      "https://assembly.tokengo.top:8843/System.dll",
+      "https://assembly.tokengo.top:8843/System.Buffers.dll",
+      "https://assembly.tokengo.top:8843/System.Collections.dll",
+      "https://assembly.tokengo.top:8843/System.Core.dll",
+      "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
+      "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
+      "https://assembly.tokengo.top:8843/mscorlib.dll",
+      "https://assembly.tokengo.top:8843/System.Linq.dll",
+      "https://assembly.tokengo.top:8843/System.Console.dll",
+      "https://assembly.tokengo.top:8843/System.Runtime.dll",
+      "https://assembly.tokengo.top:8843/System.Net.Http.dll",
+      "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
+      "https://assembly.tokengo.top:8843/System.Console.dll"];
+
+    this.setState({
+      assemblys: assemblys
+    }, () => {
+      localStorage.setItem('assemblys', JSON.stringify(assemblys));
+    })
+  }
+
+  async beforeUpload({ file, fileList }: any) {
+    let assembly = [file.url];
+    await this.onAddAssembly(assembly)
+    return true;
   }
 
   render() {
@@ -257,9 +312,6 @@ export default class App extends Component {
             Web IDE
           </div>
           <div>
-            <div><Button block theme='borderless' onClick={() => this.setState({
-              depend: true
-            })}>依赖</Button></div>
             <Tree
               treeData={treeData}
               defaultValue={'1'}
@@ -273,6 +325,9 @@ export default class App extends Component {
               renderLabel={renderLabel}>
             </Tree>
           </div>
+          <div><Button block theme='borderless' onClick={() => this.setState({
+            depend: true
+          })}>管理编译依赖</Button></div>
         </Sider>
         <Layout
           className="web-layout">
@@ -315,7 +370,7 @@ export default class App extends Component {
                 </code>
               </TabPane>
               <TabPane tab="错误" itemKey="2" style={{ overflow: 'auto', maxHeight: '100px' }}>
-                <code style={{ whiteSpace: 'pre-wrap',color:'red' }}>
+                <code style={{ whiteSpace: 'pre-wrap', color: 'red' }}>
                   {errprContent}
                 </code>
               </TabPane>
@@ -338,8 +393,30 @@ export default class App extends Component {
               )
             })}
           </Card>
-          <Input value={assembly} onChange={(e) => this.setState({ assembly: e })}></Input>
-          <Button block onClick={() => this.onAddAssembly()}>添加</Button>
+          <Input style={{
+            marginTop: 10
+          }} value={assembly} onChange={(e) => this.setState({ assembly: e })}></Input>
+          <Button style={{
+            marginTop: 10
+          }} block onClick={() => this.onAddAssembly()}>添加</Button>
+          <Button style={{
+            marginTop: 10
+          }} block onClick={() => this.onRemoveAssembly()}>还原</Button>
+
+          <Upload style={{
+            marginTop: 10
+          }}
+            draggable={true}
+            transformFile={(file) => {
+              var url = URL.createObjectURL(file);
+              var assembly = [url];
+              this.onAddAssembly(assembly);
+              return file as any;
+            }}
+            showUploadList={false}
+            dragMainText={'点击上传文件或拖拽文件到这里'}
+            dragSubText="上传程序集"
+          ></Upload>
         </Modal>
       </Layout >
     )
