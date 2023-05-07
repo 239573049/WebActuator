@@ -16,14 +16,13 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <script src="_framework/blazor.webassembly.js" autostart="false"></script>
-  <script>navigator.serviceWorker.register('service-worker.js');</script>
   <script type="module">
     import { BrotliDecode } from './decode.min.js';
     import * as exportManage from './exportManage.js';
     window.exportManage = exportManage;
     Blazor.start({
       loadBootResource: function (type, name, defaultUri, integrity) {
-        if (type !== 'dotnetjs') {
+          if (type !== 'dotnetjs') {
           return (async function () {
             const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
             if (!response.ok) {

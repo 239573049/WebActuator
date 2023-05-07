@@ -433,7 +433,7 @@
       "url": "decode.min.js"
     },
     {
-      "hash": "sha256-EXcHDglhv\/nVTcdjit2v2EvTGiG7gwDk55\/ULfzISak=",
+      "hash": "sha256-a7YwjFIdzV1jW9TlsZLo9WrxmTh7oGFLLDX6UFCaE7U=",
       "url": "exportManage.js"
     },
     {
@@ -449,5 +449,5 @@
       "url": "manifest.json"
     }
   ],
-  "version": "r+L7q+hM"
+  "version": "njAUj5\/e"
 };
