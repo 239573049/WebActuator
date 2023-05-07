@@ -6,7 +6,10 @@ import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
 import { DiagnosticDto, DiagnosticSeverity } from './models/exportManage';
+import axios from 'axios';
+
 const { Footer, Sider, Content } = Layout;
+
 
 const body = document.body;
 body.setAttribute('theme-mode', 'dark');
@@ -18,71 +21,6 @@ const renderLabel = (label: any, item: any) => (
     {!item.isUpdate ? <span>{label}</span> : <Input value={label} />}
   </div>
 );
-
-const value = [{
-  name: 'Hell word.cs',
-  value: `Console.WriteLine("Hello World");`
-}, {
-  name: 'Rectangle.cs',
-  value: `
-using System;
-
-Rectangle r = new Rectangle();
-r.Acceptdetails();
-r.Display();
-Console.ReadLine();
-class Rectangle
-{
-    // 成员变量
-    double length;
-    double width;
-    public void Acceptdetails()
-    {
-        length = 4.5;
-        width = 3.5;
-    }
-    public double GetArea()
-    {
-        return length * width;
-    }
-    public void Display()
-    {
-        Console.WriteLine("Length: {0}", length);
-        Console.WriteLine("Width: {0}", width);
-        Console.WriteLine("Area: {0}", GetArea());
-    }
-}
-`
-}, {
-  name: 'Sizeof.cs',
-  value: `Console.WriteLine("Size of int: {0}", sizeof(int));`
-}, {
-  name: 'Printdata.cs',
-  value: `
-  
-  Printdata p = new Printdata();
-  // 调用 print 来打印整数
-  p.print(1);
-  // 调用 print 来打印浮点数
-  p.print(1.23);
-  // 调用 print 来打印字符串
-  p.print("Hello Runoob");
-  
-  void print(int i)
-  {
-     Console.WriteLine("输出整型: {0}", i );
-  }
-
-  void print(double f)
-  {
-     Console.WriteLine("输出浮点型: {0}" , f);
-  }
-
-  void print(string s)
-  {
-     Console.WriteLine("输出字符串: {0}", s);
-  }`
-}]
 
 window.self.MonacoEnvironment = {
   getWorkerUrl: function (moduleId: any, label: any) {
@@ -150,20 +88,14 @@ export default class App extends Component {
         isLeaf: true,
         value: 'Rectangle.cs',
         isUpdate: false
-      },
-      {
-        key: '3',
-        label: 'Printdata.cs',
-        isLeaf: true,
-        value: 'Printdata.cs',
-        isUpdate: false
-      }
-    ] as TreeNodeData[],
+      }] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
     monaco: null as unknown as typeof monacoEditor
   }
   constructor(props: {} | Readonly<{}>) {
     super(props);
+
+
     React.createRef();
   }
 
@@ -303,22 +235,15 @@ export default class App extends Component {
             <div><Button block theme='borderless' onClick={() => this.setState({
               depend: true
             })}>依赖</Button></div>
-            <Tree onDoubleClick={(e, t) => {
-              if (t.value) {
-
-                let result = value.filter(x => x.name === t.value);
-                if (result) {
-                  editor.setValue(result[0].value)
-                }
-              }
-            }}
+            <Tree
               treeData={treeData}
               defaultValue={'1'}
               onChange={(e) => {
-                let result = value.find(x => x.name === e);
-                if (result) {
-                  editor.setValue(result.value)
-                }
+                axios.get(`/code/${e}`).then((res: any) => {
+                  if (res.data) {
+                    editor.setValue(res.data)
+                  }
+                });
               }}
               renderLabel={renderLabel}>
             </Tree>
