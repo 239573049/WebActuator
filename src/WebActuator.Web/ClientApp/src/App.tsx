@@ -117,6 +117,20 @@ export default class App extends Component {
         isLeaf: true,
         value: '算和.cs',
         isUpdate: false
+      },
+      {
+        key: '7',
+        label: '冒泡排序.cs',
+        isLeaf: true,
+        value: '冒泡排序.cs',
+        isUpdate: false
+      },
+      {
+        key: '8',
+        label: '递归树形.cs',
+        isLeaf: true,
+        value: '递归树形.cs',
+        isUpdate: false
       }] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
     monaco: null as unknown as typeof monacoEditor
