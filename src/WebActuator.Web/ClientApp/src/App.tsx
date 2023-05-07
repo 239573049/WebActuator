@@ -1,7 +1,7 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal } from '@douyinfe/semi-ui';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane } from '@douyinfe/semi-ui';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
@@ -11,6 +11,7 @@ const { Footer, Sider, Content } = Layout;
 const body = document.body;
 body.setAttribute('theme-mode', 'dark');
 
+let log = ''
 
 const renderLabel = (label: any, item: any) => (
   <div style={{ display: 'flex' }}>
@@ -55,6 +56,32 @@ class Rectangle
 }, {
   name: 'Sizeof.cs',
   value: `Console.WriteLine("Size of int: {0}", sizeof(int));`
+}, {
+  name: 'Printdata.cs',
+  value: `
+  
+  Printdata p = new Printdata();
+  // 调用 print 来打印整数
+  p.print(1);
+  // 调用 print 来打印浮点数
+  p.print(1.23);
+  // 调用 print 来打印字符串
+  p.print("Hello Runoob");
+  
+  void print(int i)
+  {
+     Console.WriteLine("输出整型: {0}", i );
+  }
+
+  void print(double f)
+  {
+     Console.WriteLine("输出浮点型: {0}" , f);
+  }
+
+  void print(string s)
+  {
+     Console.WriteLine("输出字符串: {0}", s);
+  }`
 }]
 
 window.self.MonacoEnvironment = {
@@ -123,6 +150,13 @@ export default class App extends Component {
         isLeaf: true,
         value: 'Rectangle.cs',
         isUpdate: false
+      },
+      {
+        key: '3',
+        label: 'Printdata.cs',
+        isLeaf: true,
+        value: 'Printdata.cs',
+        isUpdate: false
       }
     ] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
@@ -137,9 +171,9 @@ export default class App extends Component {
     document.addEventListener('click', (e) => this.handleClick());
 
     (window as any).OnWriteLine = (message: string) => {
-      Notification.info({
-        title: 'Info',
-        content: message,
+      log += message + '\n';
+      this.setState({
+        logContent: log
       })
     }
 
@@ -241,7 +275,7 @@ export default class App extends Component {
   }
 
   render() {
-    var { code, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
+    var { code, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
@@ -255,7 +289,7 @@ export default class App extends Component {
     };
 
     return (
-      <Layout style={{ height: '100%' }}>
+      <Layout style={{ height: '100%', overflow: 'hidden' }}>
         <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px' }} >
           <div style={{
             justifyContent: "space-between",
@@ -300,7 +334,7 @@ export default class App extends Component {
                 language="csharp"
                 theme="vs-dark"
                 value={code}
-                height='calc(100vh - 61px)'
+                height='calc(100vh - 150px)'
                 options={options}
                 onChange={(value, e) => this.onChange(value, e)}
                 editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
@@ -320,11 +354,24 @@ export default class App extends Component {
           <Footer
             style={{
               justifyContent: "space-between",
-              padding: "20px",
+              height: "150px",
               backgroundColor: 'var(--semi-color-bg-1)',
-              textAlign: "center",
               color: "var(--semi-color-text-2)",
-            }}>.NET 7 Web Assembly</Footer>
+            }}>
+            <Tabs type="card" style={{ height: '100%' }}>
+              <TabPane tab="输出" itemKey="1" style={{ overflow: 'auto', maxHeight: '100px' }}>
+                <code style={{ whiteSpace: 'pre-wrap' }}>
+                  {logContent}
+                </code>
+              </TabPane>
+              <TabPane tab="控制台" itemKey="2" style={{ overflow: 'auto' }}>
+                控制台
+              </TabPane>
+              <TabPane tab="错误" itemKey="3" style={{ overflow: 'auto' }}>
+                错误
+              </TabPane>
+            </Tabs>
+          </Footer>
         </Layout>
         <Modal
           header={null}
