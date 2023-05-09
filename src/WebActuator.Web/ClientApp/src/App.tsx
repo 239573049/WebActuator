@@ -327,7 +327,7 @@ export default class App extends Component {
       selectOnLineNumbers: true,
       automaticLayout: true,
     };
-    const home = query.get('home');
+    const home = query.get('home') ?? "/";
     return (
       <Layout style={{ height: '100%', overflow: 'hidden' }}>
         <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px' }} >
@@ -339,8 +339,8 @@ export default class App extends Component {
           }}>
             Web IDE
           </div>
-          {home && <Button block onClick={() => {
-            window.open(home,'_self');
+          {home && <Button theme='borderless' block onClick={() => {
+            window.open(home, '_self');
           }}>首页</Button>}
           <div>
             <Tree
@@ -365,8 +365,8 @@ export default class App extends Component {
           <Content style={{
             height: 'max-content',
           }}>
-            <Spin tip="编译预热中，请稍后..." spinning={loading}>
-              <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
+            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
+              <Spin tip="编译预热中，请稍后..." spinning={loading}>
                 <MonacoEditor
                   language="csharp"
                   theme="vs-dark"
@@ -376,18 +376,18 @@ export default class App extends Component {
                   onChange={(value, e) => this.onChange(value, e)}
                   editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
                 />
-              </div>
-              {contextMenu && (
-                <Card
-                  style={{
-                    top: contextMenu.y,
-                    left: contextMenu.x,
-                    backgroundColor: 'white'
-                  }} className='menu'>
-                  <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
-                </Card>
-              )}
-            </Spin>
+              </Spin>
+            </div>
+            {contextMenu && (
+              <Card
+                style={{
+                  top: contextMenu.y,
+                  left: contextMenu.x,
+                  backgroundColor: 'white'
+                }} className='menu'>
+                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
+              </Card>
+            )}
           </Content>
           <Footer
             style={{
