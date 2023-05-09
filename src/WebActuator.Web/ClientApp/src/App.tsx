@@ -1,12 +1,14 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane, Upload } from '@douyinfe/semi-ui';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane, Upload, Skeleton, Spin } from '@douyinfe/semi-ui';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
 import { DiagnosticDto } from './models/exportManage';
 import axios from 'axios';
+
+const query = new URLSearchParams(window.location.search);
 
 const { Footer, Sider, Content } = Layout;
 
@@ -69,6 +71,7 @@ window.self.MonacoEnvironment = {
 
 export default class App extends Component {
   state = {
+    loading: true,
     code: 'Console.WriteLine("Hello World");',
     logContent: '',
     errprContent: '',
@@ -158,9 +161,6 @@ export default class App extends Component {
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
     monaco: null as unknown as typeof monacoEditor
   }
-  constructor(props: {} | Readonly<{}>) {
-    super(props);
-  }
 
   componentDidMount(): void {
     document.addEventListener('click', (e) => this.handleClick());
@@ -181,10 +181,10 @@ export default class App extends Component {
       });
     }
 
-    setTimeout(() => {
-      this.onInit()
-    }, 3000);
+    this.onInit()
   }
+
+
 
   componentWillUnmount(): void {
     document.removeEventListener('click', (e) => this.handleClick());
@@ -234,9 +234,20 @@ export default class App extends Component {
   }
 
   async onInit() {
-    let Window = window as any;
-    var { assemblys } = this.state;
-    await Window.exportManage.SetReferences(assemblys);
+    try {
+
+      let Window = window as any;
+      var { assemblys } = this.state;
+      await Window.exportManage.SetReferences(assemblys);
+
+      this.setState({
+        loading: false,
+      })
+    } catch {
+      setTimeout(() => {
+        this.onInit()
+      }, 1000);
+    }
   }
 
   async onAddAssembly(datas: any[] | null = null) {
@@ -245,21 +256,38 @@ export default class App extends Component {
       title: 'Info',
       content: '加载程序集中...',
     })
-    if (datas) {
-      console.log(datas);
-      await (window as any).exportManage.SetReferences(datas);
-    } else {
-      console.log(assembly);
-      await (window as any).exportManage.SetReferences([assembly]);
+    this.setState({
+      loading: true,
+    })
+    try {
+      if (datas) {
+        console.log(datas);
+        await (window as any).exportManage.SetReferences(datas);
+      } else {
+        console.log(assembly);
+        await (window as any).exportManage.SetReferences([assembly]);
+      }
+
+      assemblys.push(assembly);
+      localStorage.setItem('assemblys', JSON.stringify(assemblys));
+
+      Notification.success({
+        title: 'Success',
+        content: '加载程序集成功',
+      })
+
+    } catch (error) {
+      Notification.error({
+        title: '错误',
+        content: '加载程序集失败',
+      })
+    } finally {
+
+      this.setState({
+        loading: false,
+      })
     }
 
-    Notification.success({
-      title: 'Success',
-      content: '加载程序集成功',
-    })
-
-    assemblys.push(assembly);
-    localStorage.setItem('assemblys', JSON.stringify(assemblys));
   }
 
   onRemoveAssembly() {
@@ -293,13 +321,13 @@ export default class App extends Component {
   }
 
   render() {
-    var { code, errprContent, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
+    var { code, loading, errprContent, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
       automaticLayout: true,
     };
-
+    const home = query.get('home');
     return (
       <Layout style={{ height: '100%', overflow: 'hidden' }}>
         <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px' }} >
@@ -311,6 +339,9 @@ export default class App extends Component {
           }}>
             Web IDE
           </div>
+          {home && <Button block onClick={() => {
+            window.open(home,'_self');
+          }}>首页</Button>}
           <div>
             <Tree
               treeData={treeData}
@@ -334,27 +365,29 @@ export default class App extends Component {
           <Content style={{
             height: 'max-content',
           }}>
-            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
-              <MonacoEditor
-                language="csharp"
-                theme="vs-dark"
-                value={code}
-                height='calc(100vh - 150px)'
-                options={options}
-                onChange={(value, e) => this.onChange(value, e)}
-                editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
-              />
-            </div>
-            {contextMenu && (
-              <Card
-                style={{
-                  top: contextMenu.y,
-                  left: contextMenu.x,
-                  backgroundColor: 'white'
-                }} className='menu'>
-                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
-              </Card>
-            )}
+            <Spin tip="编译预热中，请稍后..." spinning={loading}>
+              <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
+                <MonacoEditor
+                  language="csharp"
+                  theme="vs-dark"
+                  value={code}
+                  height='calc(100vh - 150px)'
+                  options={options}
+                  onChange={(value, e) => this.onChange(value, e)}
+                  editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
+                />
+              </div>
+              {contextMenu && (
+                <Card
+                  style={{
+                    top: contextMenu.y,
+                    left: contextMenu.x,
+                    backgroundColor: 'white'
+                  }} className='menu'>
+                  <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
+                </Card>
+              )}
+            </Spin>
           </Content>
           <Footer
             style={{

@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\dotnet\web-actuator\src\WebActuator.WebAssembly\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
-    <History>True|2023-05-07T18:29:55.3117618Z;True|2023-05-08T00:54:02.1922330+08:00;True|2023-05-08T00:12:31.4426754+08:00;True|2023-05-07T23:41:52.2329715+08:00;True|2023-05-07T23:19:05.3210144+08:00;True|2023-05-07T23:08:48.9352782+08:00;True|2023-05-07T22:31:37.9332468+08:00;</History>
+    <History>True|2023-05-07T19:21:06.5431769Z;True|2023-05-08T02:29:55.3117618+08:00;True|2023-05-08T00:54:02.1922330+08:00;True|2023-05-08T00:12:31.4426754+08:00;True|2023-05-07T23:41:52.2329715+08:00;True|2023-05-07T23:19:05.3210144+08:00;True|2023-05-07T23:08:48.9352782+08:00;True|2023-05-07T22:31:37.9332468+08:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
