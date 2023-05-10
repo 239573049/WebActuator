@@ -1,11 +1,6 @@
-﻿using BlazorComponent.Web;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
-using SkiaSharp;
-using System.IO;
-using System.Reflection;
 
 namespace WebActuator.WebAssemblyClient.Pages;
 
@@ -20,21 +15,6 @@ public partial class Index
     private string error;
 
     private MMonacoEditor Monaco;
-
-    private IBrowserFile _file;
-
-    private IBrowserFile File
-    {
-        get
-        {
-            return _file;
-        }
-        set
-        {
-            _file = value;
-            LoadFile();
-        }
-    }
 
     private bool referenceDrawer = false;
 
@@ -161,20 +141,6 @@ public partial class Index
             ReferenceManage.AddReference(v, MetadataReference.CreateFromStream(stream));
         }
         catch
-        {
-        }
-    }
-
-    private async void LoadFile()
-    {
-        try
-        {
-            using var stream = new MemoryStream();
-            await _file.OpenReadStream(_file.Size).CopyToAsync(stream);
-
-            ReferenceManage.AddReference(_file.Name, MetadataReference.CreateFromStream(stream));
-        }
-        catch (Exception e)
         {
         }
     }
