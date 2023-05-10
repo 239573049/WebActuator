@@ -309,7 +309,7 @@ export default class App extends Component {
     const home = query.get('home') ?? "/";
     return (
       <Layout style={{ height: '100%', overflow: 'hidden' }}>
-        <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px' }} >
+        <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px',minWidth: '200px' }} >
           <div style={{
             justifyContent: "space-between",
             padding: "10px",

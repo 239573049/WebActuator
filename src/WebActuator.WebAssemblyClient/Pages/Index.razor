@@ -1,0 +1,125 @@
+﻿@page "/"
+@inject IJSRuntime JSruntime
+@inject TryJSModule TryJSModule
+<MNavigationDrawer @bind-Value="_drawer"
+                          App
+                          Permanent
+                          Floating
+                   MiniVariantWidth="300">
+    <MNavigationDrawer @bind-Value="_drawer" Absolute
+                              MiniVariant>
+        <MAvatar Class="d-block text-center mx-auto mt-4"
+                 Size="36">
+            <MImage Src="/csharp.png"></MImage>
+        </MAvatar>
+
+        <MDivider Class="mx-3 my-5"></MDivider>
+
+        <MTooltip Right>
+            <ActivatorContent>
+                <MButton Icon XLarge OnClick="RunCode" @attributes="@context.Attrs">
+                    <MIcon>mdi-play</MIcon>
+                </MButton>
+            </ActivatorContent>
+            <ChildContent>
+                Ctrl + S
+            </ChildContent>
+        </MTooltip>
+
+        <MButton OnClick="async ()=>await Goto(Github)" Class="github" Target="_blank" Icon XLarge>
+            <MIcon>mdi-github</MIcon>
+        </MButton>
+
+    </MNavigationDrawer>
+
+    <MListItemGroup @bind-Value="_selectedItem"
+                    Class="pl-14">
+        @foreach (var item in files)
+        {
+            <MListItem OnClick="async ()=> await SetValue(item.Cotent)">
+                <MListItemContent>
+                    <MListItemTitle>@item.Name</MListItemTitle>
+                </MListItemContent>
+            </MListItem>
+        }
+    </MListItemGroup>
+
+</MNavigationDrawer>
+
+<MMain>
+    <div id="code">
+        <MMonacoEditor @bind-Value=value @ref=Monaco Height="@("100%")" EditorOptions="Options"></MMonacoEditor>
+    </div>
+
+    <div id="splitter"></div>
+
+    <div id="render">
+        <code>
+            @((MarkupString)error)
+        </code>
+    </div>
+</MMain>
+
+
+<style>
+    #code {
+        width: 50%;
+        height: 100%;
+        float: left;
+    }
+
+        #code .editor-group {
+            height: 100%;
+        }
+
+            #code .editor-group .custom-editor {
+                height: calc(100% - 48px);
+            }
+
+    #render {
+        width: 49%;
+        height: 100%;
+        float: right;
+        padding: 5px;
+    }
+
+    #splitter {
+        width: 4px;
+        height: 100%;
+        float: left;
+        cursor: col-resize;
+        background-color: #6b80bb;
+    }
+
+    .m-progress-circular {
+        margin: 1rem;
+    }
+
+
+    /* Hide the default scroll bar */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    /* Customize the scrollbar style */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    /* Scroll bar track */
+    ::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+    }
+    /* Scroll bar slider */
+    ::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 5px;
+    }
+        /* Scroll bar slider hover state */
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+        }
+    /* Scroll bar corner */
+    ::-webkit-scrollbar-corner {
+        background-color: #f5f5f5;
+    }
+</style>
