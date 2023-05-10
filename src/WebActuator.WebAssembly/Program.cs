@@ -6,7 +6,7 @@ using WebActuator.WebAssembly;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 
-var app=  builder.Build();
+var app = builder.Build();
 
 WebActuatorApp.Init(app.Services);
 

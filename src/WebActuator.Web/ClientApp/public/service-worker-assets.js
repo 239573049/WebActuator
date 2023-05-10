@@ -25,11 +25,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-aD5DzdcfW+y9fA6QVU2fuEmd7C21Z+egEcg5E1EEbjo=",
+      "hash": "sha256-pTJ1\/NnByER\/iUIKUPIklWf4xhh4X401g\/3Lv\/TahkA=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-ui484Ti9djKhAYm50P4rZlWxPnbYorvPXFGx82C3doE=",
+      "hash": "sha256-WEHAERJHwb7zOROiqBMpndtiHTgJlFUo5+Y9fZ2JSV8=",
       "url": "_framework\/Microsoft.AspNetCore.Components.dll"
     },
     {
@@ -37,7 +37,7 @@
       "url": "_framework\/Microsoft.AspNetCore.Components.Web.dll"
     },
     {
-      "hash": "sha256-EPxtNeWp65ax72jUbQn+uzYFes3vVYME6dToNRjuZVM=",
+      "hash": "sha256-59cHp7rnB6OetQIXaPnyl4sZoMl2AgExjdJV6Ka4zGg=",
       "url": "_framework\/Microsoft.AspNetCore.Components.WebAssembly.dll"
     },
     {
@@ -85,11 +85,11 @@
       "url": "_framework\/Microsoft.Extensions.Primitives.dll"
     },
     {
-      "hash": "sha256-1GhkJyOn1KG7\/DDO+na\/ymLnCAvtmZINvHbkIdGF+oI=",
+      "hash": "sha256-hzUbH0JMgddoKwFlMCFYXggV2X6wX6pWg7JUL9QP2z4=",
       "url": "_framework\/Microsoft.JSInterop.dll"
     },
     {
-      "hash": "sha256-Vyc5i056MhYvKBNcUW3mG6argnBqe6ZMZXsgInSQkw4=",
+      "hash": "sha256-slx0GTjKTzH0al2gU4HdJ4yyw\/+8nhGoRKJASx\/1mE4=",
       "url": "_framework\/Microsoft.JSInterop.WebAssembly.dll"
     },
     {
@@ -137,7 +137,7 @@
       "url": "_framework\/System.Globalization.dll"
     },
     {
-      "hash": "sha256-9IA96ZmCpcEECnyP9PRcY6oNQmD1narKFTavyQQHJ5g=",
+      "hash": "sha256-WqL5iErjaArHCJy05QU3B70iGNIdcjmxOPR\/+dLbJXw=",
       "url": "_framework\/System.IO.Compression.dll"
     },
     {
@@ -161,7 +161,7 @@
       "url": "_framework\/System.Memory.dll"
     },
     {
-      "hash": "sha256-XyjLgjTThoKcJF63mT8JZs9h5ABtkMZ7pmU\/ObLaQEU=",
+      "hash": "sha256-PtYh9UOGPj7cm6fzGNdIqZrLWcjqXKWm2vB1zIGXxQU=",
       "url": "_framework\/System.Net.Http.dll"
     },
     {
@@ -173,19 +173,19 @@
       "url": "_framework\/System.ObjectModel.dll"
     },
     {
-      "hash": "sha256-TWPMeCHg8nt0yxsgEFs+5B+XuQpsJPRibYAnvoc\/5X8=",
+      "hash": "sha256-+Aw3SLBOJeckXFdqTG78\/Sfy\/eHn6vlJTuXKJMwCTGM=",
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-Ow6Db9aXApws\/MAPEK\/HtdBOQfOkMSNm882d0pIhtoA=",
+      "hash": "sha256-hyCA3eLVd2moAyoZwrMf7lIKuFdqgXCatRMxDzSjiHs=",
       "url": "_framework\/System.Private.Uri.dll"
     },
     {
-      "hash": "sha256-py5ucwhVQgRXFxbgflT4sZvHm2r4QV4LL0tfnopdyB8=",
+      "hash": "sha256-EnzanFgEjI2f8cike2eCrIj305gcq1mYUFK6EL5olk4=",
       "url": "_framework\/System.Private.Xml.dll"
     },
     {
-      "hash": "sha256-lKgpN56phFsWLstmqX7j8FbIwkTN2+5Ov4v9pjXWdLQ=",
+      "hash": "sha256-DFLHU+PRvdIDxZjbf3Qw235C\/fU\/lW+Xh7mSbKevIwk=",
       "url": "_framework\/System.Private.Xml.Linq.dll"
     },
     {
@@ -277,7 +277,7 @@
       "url": "_framework\/System.Threading.Tasks.dll"
     },
     {
-      "hash": "sha256-R4\/6ZDa5fJhFqdoHTuK+fL8J49nyeQjrPOG3kL\/OAu0=",
+      "hash": "sha256-JfPTPiOyzaZ4NlY\/D7NOjcGqd4QTB\/xipqcqytJOiJU=",
       "url": "_framework\/System.Threading.Tasks.Parallel.dll"
     },
     {
@@ -305,19 +305,19 @@
       "url": "_framework\/System.Xml.XPath.XDocument.dll"
     },
     {
-      "hash": "sha256-j7E1Cd2ds8QnKJo374v7+tqhmbhKeYqtUxAQG9TyE84=",
+      "hash": "sha256-NA7GzuP0a+VDlsi3HH971RhV3nWyzjIfH1LbR1ncZ9E=",
       "url": "_framework\/WebActuator.dll"
     },
     {
-      "hash": "sha256-vRhFSHv\/Ajan0\/4GlKEIaVT7rziWOVwtQbPcZVwWzvk=",
+      "hash": "sha256-n\/KLhNGYkFV5jJwnwxNdicszC0ryabHKYPmNGAmZG5E=",
       "url": "_framework\/WebActuator.WebAssembly.dll"
     },
     {
       "hash": "sha256-mcOhI23lVg+1C+YWpO82Oo2qgr2\/YH6oBBk24ufzBQY=",
-      "url": "_framework\/dotnet.7.0.5.1tmmnl1a18.js"
+      "url": "_framework\/dotnet.7.0.5.08quie1owi.js"
     },
     {
-      "hash": "sha256-s8NE8Ibj+\/q4S09cctgPLi4n\/n15ev4wZ8PhnZxnkoo=",
+      "hash": "sha256-9fxUp\/eSECbiGzN3o4kTB0daDZO2KUho3Q1yMfzD\/gY=",
       "url": "_framework\/dotnet.wasm"
     },
     {
@@ -441,6 +441,7 @@
       "url": "icon-512.png"
     },
     {
+      "hash": "sha256-wf5Vg+j5kMBoknlZFcMbhcVOj5PVJurjF0Y0q7+jeng=",
       "url": "index.html"
     },
     {
@@ -448,5 +449,5 @@
       "url": "manifest.json"
     }
   ],
-  "version": "deya8W4b"
+  "version": "Y5ohveAt"
 };

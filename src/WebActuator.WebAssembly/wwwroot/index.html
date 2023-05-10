@@ -7,13 +7,13 @@
     <base href="/" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="manifest.json" rel="manifest" />
-    
+
     <!-- If you add any scoped CSS files, uncomment the following to load them
     <link href="WebActuator.WebAssembly.styles.css" rel="stylesheet" /> -->
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">加载中</div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -26,6 +26,15 @@
         import { BrotliDecode } from './decode.min.js';
         import * as exportManage from './exportManage.js';
         window.exportManage = exportManage;
+
+        window.WriteLine = (m) => {
+            console.log(m);
+        }
+
+        window.Diagnostic = (m) => {
+            console.log(JSON.parse(m))
+        }
+
         Blazor.start({
             loadBootResource: function (type, name, defaultUri, integrity) {
                 if (type !== 'dotnetjs' && location.hostname !== 'localhost') {
@@ -44,10 +53,35 @@
                     })();
                 }
             }
+        }).then(async () => {
+
+            let assemblys = [
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Buffers.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Collections.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Core.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Expressions.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.Parallel.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/mscorlib.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Linq.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Runtime.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Private.Uri.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Net.Http.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Private.CoreLib.dll",
+                "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
+
+            await window.exportManage.SetReferences(assemblys);
+            window.exportManage.RunSubmission(`
+                                var http = new HttpClient();
+
+                                var message = await http.GetAsync("https://open666.cn/");
+
+                                var data = await message.Content.ReadAsStringAsync();
+
+                                Console.WriteLine(data);`, false)
+
         });
-        window.OnWriteLine = (m) => {
-            console.log(m);
-        }
     </script>
 </body>
 

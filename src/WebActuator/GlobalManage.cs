@@ -7,7 +7,7 @@ public partial class GlobalManage
     #region Using Setting
     private static readonly List<string> _usings = new(50)
     {
-        "System","System.Collections.Generic","System.Console","System.Diagnostics","System.Dynamic","System.Linq","System.Linq.Expressions","System.Text","System.Threading.Tasks"
+        "System","System.Collections.Generic","System.Net.Http","System.Console","System.Diagnostics","System.Dynamic","System.Linq","System.Linq.Expressions","System.Text","System.Threading.Tasks"
     };
 
     public static string[] Using() => _usings.ToArray();
