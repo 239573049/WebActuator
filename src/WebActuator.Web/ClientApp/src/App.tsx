@@ -7,6 +7,7 @@ import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
 import { DiagnosticDto } from './models/exportManage';
 import axios from 'axios';
+import { defaultAssemblys } from './configs/config';
 
 const query = new URLSearchParams(window.location.search);
 
@@ -78,21 +79,7 @@ export default class App extends Component {
     depend: false,
     searchWords: ["info", "error", "warning", "debug", "trace"],
     assembly: "",
-    assemblys: [
-      "https://assembly.tokengo.top:8843/System.dll",
-      "https://assembly.tokengo.top:8843/System.Buffers.dll",
-      "https://assembly.tokengo.top:8843/System.Collections.dll",
-      "https://assembly.tokengo.top:8843/System.Core.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
-      "https://assembly.tokengo.top:8843/mscorlib.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.dll",
-      "https://assembly.tokengo.top:8843/System.Private.Uri.dll",
-      "https://assembly.tokengo.top:8843/System.Console.dll",
-      "https://assembly.tokengo.top:8843/System.Runtime.dll",
-      "https://assembly.tokengo.top:8843/System.Net.Http.dll",
-      "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
-      "https://assembly.tokengo.top:8843/System.Console.dll"],
+    assemblys: [...defaultAssemblys],
     contextMenu: {
       x: -1000,
       y: -1000
@@ -157,6 +144,13 @@ export default class App extends Component {
         label: '递归树形.cs',
         isLeaf: true,
         value: '递归树形.cs',
+        isUpdate: false
+      },
+      {
+        key: '9',
+        label: 'openai.cs',
+        isLeaf: true,
+        value: 'openai.cs',
         isUpdate: false
       }] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
@@ -292,27 +286,10 @@ export default class App extends Component {
   }
 
   onRemoveAssembly() {
-    var { assemblys } = this.state;
-    assemblys = [
-      "https://assembly.tokengo.top:8843/System.dll",
-      "https://assembly.tokengo.top:8843/System.Buffers.dll",
-      "https://assembly.tokengo.top:8843/System.Collections.dll",
-      "https://assembly.tokengo.top:8843/System.Core.dll",
-      "https://assembly.tokengo.top:8843/System.Private.Uri.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
-      "https://assembly.tokengo.top:8843/mscorlib.dll",
-      "https://assembly.tokengo.top:8843/System.Linq.dll",
-      "https://assembly.tokengo.top:8843/System.Console.dll",
-      "https://assembly.tokengo.top:8843/System.Runtime.dll",
-      "https://assembly.tokengo.top:8843/System.Net.Http.dll",
-      "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
-      "https://assembly.tokengo.top:8843/System.Console.dll"];
-
     this.setState({
-      assemblys: assemblys
+      assemblys: defaultAssemblys
     }, () => {
-      localStorage.setItem('assemblys', JSON.stringify(assemblys));
+      localStorage.setItem('assemblys', JSON.stringify(defaultAssemblys));
     })
   }
 
