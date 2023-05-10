@@ -157,26 +157,11 @@ function initLanguages() {
 
 }
 
-function parseToDOM(htmlstring) {
-    const tpl = document.createElement('template');
-    tpl.innerHTML = htmlstring;
-    return tpl.content;
-}
-
-function addScript(scriptNode) {
-    if (document.getElementById(scriptNode.id) != null)
-        return;
-
-    var node = parseToDOM(scriptNode.content);
-
-    if (scriptNode.nodeType == 0) {
-        document.body.appendChild(node);
-    }
-    else {
-        document.head.appendChild(node);
-    }
+function renderScroll() {
+    var element = document.getElementById("render");
+    element.scrollTop = element.scrollHeight;
 }
 
 export {
-    init, addScript
+    init, renderScroll
 }

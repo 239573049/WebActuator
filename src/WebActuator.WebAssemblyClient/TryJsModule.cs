@@ -15,4 +15,8 @@ public class TryJSModule : JSModule
         await InvokeVoidAsync("init");
     }
 
+    public async ValueTask RenderScroll()
+    {
+        await InvokeVoidAsync("renderScroll");
+    }
 }

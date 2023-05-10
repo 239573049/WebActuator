@@ -1,5 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using BlazorComponent.Web;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
+using SkiaSharp;
+using System.IO;
 using System.Reflection;
 
 namespace WebActuator.WebAssemblyClient.Pages;
@@ -15,6 +20,23 @@ public partial class Index
     private string error;
 
     private MMonacoEditor Monaco;
+
+    private IBrowserFile _file;
+
+    private IBrowserFile File
+    {
+        get
+        {
+            return _file;
+        }
+        set
+        {
+            _file = value;
+            LoadFile();
+        }
+    }
+
+    private bool referenceDrawer = false;
 
     bool _drawer = true;
 
@@ -45,12 +67,28 @@ public partial class Index
         "https://assembly.tokengo.top:8843/System.Console.dll"
     };
 
+    private string _reference = string.Empty;
+
+    private List<string> _referenceAssembly
+    {
+        get
+        {
+            return ReferenceManage.ReferenceKeys.ToList();
+        }
+    }
+
     private StringNumber _selectedItem = 1;
 
     private List<StorageFile> files = new();
 
     protected override void OnInitialized()
     {
+        WebWriter.OnWrite = (m) =>
+        {
+            error += m;
+            RenderScroll();
+        };
+
         files.Add(new StorageFile()
         {
             Name = "HelloWorld.cs",
@@ -68,8 +106,7 @@ public partial class Index
             {
                 try
                 {
-                    using var stream = await GlobalManage.HttpClient.GetStreamAsync(x);
-                    ReferenceManage.AddReference(x, MetadataReference.CreateFromStream(stream));
+                    await OnAddReference(x);
                 }
                 catch
                 {
@@ -80,15 +117,17 @@ public partial class Index
 
         await ActuatorCompile.RunSubmission(value, false, diagnostic =>
         {
-            diagnostic.ForEach(x =>
+            diagnostic.ForEach(async x =>
             {
                 error += x.Code + ":" + x.Message + "\n";
-                _ = InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+                RenderScroll();
             });
-        }, exception =>
+        }, async exception =>
         {
             error += "编译异常：" + exception.Message + "\n";
-            _ = InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+            RenderScroll();
         });
     }
 
@@ -105,6 +144,41 @@ public partial class Index
         }
     }
 
+    private void RenderScroll()
+    {
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(50);
+            await TryJSModule.RenderScroll();
+        });
+    }
+
+    private async Task OnAddReference(string v)
+    {
+        try
+        {
+            using var stream = await GlobalManage.HttpClient.GetStreamAsync(v);
+            ReferenceManage.AddReference(v, MetadataReference.CreateFromStream(stream));
+        }
+        catch
+        {
+        }
+    }
+
+    private async void LoadFile()
+    {
+        try
+        {
+            using var stream = new MemoryStream();
+            await _file.OpenReadStream(_file.Size).CopyToAsync(stream);
+
+            ReferenceManage.AddReference(_file.Name, MetadataReference.CreateFromStream(stream));
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
     private async Task Goto(string url)
     {
         await JSruntime.InvokeVoidAsync("open", url);
@@ -114,4 +188,5 @@ public partial class Index
     {
         await Monaco.SetValueAsync(value);
     }
+
 }
