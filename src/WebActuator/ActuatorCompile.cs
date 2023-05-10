@@ -70,7 +70,6 @@ public class ActuatorCompile
                         Severity = x.Severity
                     }).ToArray());
                 }
-
                 var entryPoint = GlobalManage.CSharpCompilation.GetEntryPoint(CancellationToken.None);
                 var type = options.Assembly.GetType($"{entryPoint!.ContainingNamespace.MetadataName}.{entryPoint?.ContainingType.MetadataName}");
                 var entryPointMethod = type?.GetMethod(entryPoint!.MetadataName);
@@ -82,8 +81,8 @@ public class ActuatorCompile
                 {
                     Array.Resize(ref _submissionStates, Math.Max(_submissionIndex, _submissionStates.Length * 2));
                 }
-                // 执行代码
-                _ = await ((Task<object>)submission(_submissionStates));
+                // 执行代码 TODO: 执行方法携带Task无法执行
+                await submission.Invoke(_submissionStates);
 
             }
             else

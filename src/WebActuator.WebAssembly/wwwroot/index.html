@@ -72,14 +72,10 @@
                 "https://token-web-ide.oss-cn-shenzhen.aliyuncs.com/assembly/System.Console.dll"];
 
             await window.exportManage.SetReferences(assemblys);
+
             window.exportManage.RunSubmission(`
-                                var http = new HttpClient();
-
-                                var message = await http.GetAsync("https://open666.cn/");
-
-                                var data = await message.Content.ReadAsStringAsync();
-
-                                Console.WriteLine(data);`, false)
+        await Task.Delay(100);
+        Console.WriteLine("调试");`, false)
 
         });
     </script>

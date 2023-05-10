@@ -22,9 +22,24 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\public\code\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\public\code\**" />
+    <EmbeddedResource Remove="ClientApp\public\code\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="ClientApp\public\code\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ClientApp\public\code\Calculator.cs" />
+    <None Remove="ClientApp\public\code\Hello World.cs" />
+    <None Remove="ClientApp\public\code\StudentAchievement.cs" />
+    <None Remove="ClientApp\public\code\乘法表.cs" />
+    <None Remove="ClientApp\public\code\冒泡排序.cs" />
+    <None Remove="ClientApp\public\code\判断偶数.cs" />
+    <None Remove="ClientApp\public\code\算和.cs" />
+    <None Remove="ClientApp\public\code\递归树形.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,10 +47,6 @@
     <Content Include="ClientApp\package.json" />
     <Content Include="ClientApp\public\manifest.json" />
     <Content Include="ClientApp\tsconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\public\code\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
