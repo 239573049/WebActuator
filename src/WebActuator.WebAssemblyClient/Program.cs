@@ -4,11 +4,6 @@ using WebActuator.WebAssemblyClient;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-var writer = new WebActuator.WebWriter(Console.OpenStandardOutput());
-
-Console.SetOut(writer);
-
-
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

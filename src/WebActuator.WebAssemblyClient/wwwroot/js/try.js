@@ -43,104 +43,36 @@ function initLanguages() {
     function createDependencyProposals(range) {
         return [
             {
-                label: 'MButton',
+                label: 'psvm',
                 kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa button component",
-                insertText: '<MButton></MButton>',
-                range: range,
-            },
-            {
-                label: 'MAlert',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MAlert component",
-                insertText: '<MAlert></MAlert>',
-                range: range,
-            },
-            {
-                label: 'MResponsive',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MResponsive component",
-                insertText: '<MResponsive></MResponsive>',
-                range: range,
-            },
-            {
-                label: 'MAvatar',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MAvatar component",
-                insertText: '<MAvatar></MAvatar>',
-                range: range,
-            },
-            {
-                label: 'MBadge',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MBadge component",
-                insertText: '<MBadge></MBadge>',
-                range: range,
-            },
-            {
-                label: 'MBanner',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MBanner component",
-                insertText: '<MBanner></MBanner>',
-                range: range,
-            },
-            {
-                label: 'PBlockText ',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa PBlockText  component",
-                insertText: `<PBlockText Primary="@DateOnly.FromDateTime(DateTime.Now).ToString()"\n' +
-                    '            Secondary="@TimeOnly.FromDateTime(DateTime.Now).ToString()">\n' +
-                    '</PBlockText>`,
-                range: range,
-            },
-            {
-                label: 'MBottomNavigation',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MBottomNavigation component",
-                insertText: '<MBottomNavigation></MBottomNavigation>',
-                range: range,
-            },
-            {
-                label: 'MBottomSheet',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MBottomSheet component",
-                insertText: '<MBottomSheet></MBottomSheet>',
-                range: range,
-            },
-            {
-                label: 'MAlert',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MAlert component",
-                insertText: '<MAlert></MAlert>',
-                range: range,
-            },
-            {
-                label: 'MBreadcrumbs',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MBreadcrumbs component",
-                insertText: '<MBreadcrumbs\n' +
-                    '\tDivider="/">\n' +
-                    '</MBreadcrumbs>',
-                range: range,
-            },
-            {
-                label: 'MCard',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MCard component",
-                insertText: '<MCard Elevation="2"></MCard>',
-                range: range,
-            },
-            {
-                label: 'MChip',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "masa MChip component",
-                insertText: '  <MChip></MChip>',
+                documentation: "生成一个Main方法",
+                insertText:
+                    `
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        Console.WriteLine("Hello World!");
+    }
+}`,
                 range: range,
             }
         ];
     }
 
-    monaco.languages.registerCompletionItemProvider("razor", {
+    monaco.languages.register({id: "logger"});
+    monaco.languages.setMonarchTokensProvider("logger", {
+        tokenizer: {
+            root: [
+                [/\[error.*/, "custom-error"],
+                [/\[notice.*/, "custom-notice"],
+                [/\[info.*/, "custom-info"],
+                [/\[[a-zA-Z 0-9:]+\]/, "custom-date"],
+            ],
+        },
+    });
+
+    monaco.languages.registerCompletionItemProvider("csharp", {
         provideCompletionItems: function (model, position) {
             var word = model.getWordUntilPosition(position);
             var range = {
@@ -157,11 +89,31 @@ function initLanguages() {
 
 }
 
+function setValue(key, value) {
+    localStorage.setItem(key, value);
+}
+
+function getValue(key) {
+    let result = localStorage.getItem(key);
+    if (result) {
+        return result;
+    }
+    return "";
+}
+
+function removeValue(key) {
+    localStorage.removeItem(key);
+}
+
 function renderScroll() {
     var element = document.getElementById("render");
     element.scrollTop = element.scrollHeight;
 }
 
 export {
-    init, renderScroll
+    init,
+    renderScroll,
+    setValue,
+    getValue,
+    removeValue
 }

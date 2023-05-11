@@ -1,13 +1,15 @@
 ﻿@page "/"
 @inject IJSRuntime JSruntime
+@inject IPopupService PopupService
 @inject TryJSModule TryJSModule
+@namespace WebActuator.WebAssemblyClient
+
 <MNavigationDrawer @bind-Value="_drawer"
                           App
                           Permanent
                           Floating
                    MiniVariantWidth="300">
-    <MNavigationDrawer @bind-Value="_drawer" Absolute
-                              MiniVariant>
+    <div style="float:left;width: 60px;height: 100%;">
         <MAvatar Class="d-block text-center mx-auto mt-4"
                  Size="36">
             <MImage Src="/csharp.png"></MImage>
@@ -15,10 +17,12 @@
 
         <MDivider Class="mx-3 my-5"></MDivider>
 
-        <MButton OnClick="async ()=>await Goto(Github)" Class="github" Target="_blank" Icon XLarge>
+        @if (!string.IsNullOrEmpty(Home))
+        {
+            <MButton OnClick="async ()=>await Goto(Home)" Class="github" Target="_blank" Icon XLarge>
             <MIcon>mdi-home</MIcon>
         </MButton>
-
+        }
 
         <MTooltip Right>
             <ActivatorContent>
@@ -74,7 +78,7 @@
 
                         <MSpacer></MSpacer>
                         <MButton Color="primary"
-                                  Text
+                                      Text
                                  OnClick="() => referenceDrawer = false">
                             关闭
                         </MButton>
@@ -86,33 +90,52 @@
             <MIcon>mdi-github</MIcon>
         </MButton>
 
-    </MNavigationDrawer>
+    </div>
+    <MList Style="float:left;" Nav
+           Dense>
+        <MListItemGroup @bind-Value="_selectedItem"
+                        Color="primary">
+            @foreach (var item in files)
+            {
+                <MListItem OnClick="async ()=> await SetValue(item)">
+                    <MListItemIcon>
+                        <MIcon>mdi-file</MIcon>
+                    </MListItemIcon>
 
-    <MListItemGroup @bind-Value="_selectedItem"
-                    Class="pl-14">
-        @foreach (var item in files)
-        {
-            <MListItem OnClick="async ()=> await SetValue(item.Cotent)">
-                <MListItemContent>
-                    <MListItemTitle>@item.Name</MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-        }
-    </MListItemGroup>
+                    <MListItemContent>
+                        <MListItemTitle>@item.Name</MListItemTitle>
+                    </MListItemContent>
+                </MListItem>
+            }
+            <PModal @bind-Value=newFileDrawer
+                    Persistent
+                    OnCancel="()=>{newFileDrawer=false;}"
+                    Title="Title"
+                    Width="500">
+                <ActivatorContent>
+                    <MButton Text Block @attributes="@context.Attrs">新增文件</MButton>
+                </ActivatorContent>
+                <ChildContent>
+                    <MTextField @bind-Value="newFileName"
+                                Label="新文件名称"
+                                    Clearable></MTextField>
+                    <MButton Text Block OnClick="OnNewFile">新增</MButton>
+                </ChildContent>
+            </PModal>
+        </MListItemGroup>
+    </MList>
 
 </MNavigationDrawer>
 
 <MMain>
     <div id="code">
-        <MMonacoEditor @bind-Value=value @ref=Monaco Height="@("100%")" EditorOptions="Options"></MMonacoEditor>
+        <MMonacoEditor InitCompleteHandle="async()=>await InitMonaco()" @bind-Value=value @ref=Monaco Height="@("100%")" EditorOptions="Options"></MMonacoEditor>
     </div>
 
     <div id="splitter"></div>
 
     <div id="render">
-        <code style="white-space: pre-wrap;text-indent: 20px;background-color:black;color:aliceblue;">
-            @((MarkupString)error)
-        </code>
+        <Logger @bind-Value="error" />
     </div>
 </MMain>
 

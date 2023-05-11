@@ -1,38 +1,24 @@
 import './App.css';
 import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import React, { Component } from 'react'
-import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane, Upload, Skeleton, Spin } from '@douyinfe/semi-ui';
+import { Button, Card, Notification, Highlight, Input, Layout, Nav, TextArea, Tree, Typography, Modal, Tabs, TabPane, Upload, Skeleton, Spin, Divider } from '@douyinfe/semi-ui';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
 import { TreeNodeData } from '@douyinfe/semi-ui/lib/es/tree';
 import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js';
 import { DiagnosticDto } from './models/exportManage';
 import axios from 'axios';
-import { defaultAssemblys } from './configs/config';
+import { defaultAssemblys, defaultFiles } from './configs/config';
 
 const query = new URLSearchParams(window.location.search);
 
-const { Footer, Sider, Content } = Layout;
+const { Sider } = Layout;
 
 let assemblys = [];
 
 if (localStorage.getItem('assemblys')) {
   assemblys = JSON.parse(localStorage.getItem('assemblys') as string);
 } else {
-  assemblys = [
-    "https://assembly.tokengo.top:8843/System.dll",
-    "https://assembly.tokengo.top:8843/System.Buffers.dll",
-    "https://assembly.tokengo.top:8843/System.Collections.dll",
-    "https://assembly.tokengo.top:8843/System.Core.dll",
-    "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
-    "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
-    "https://assembly.tokengo.top:8843/mscorlib.dll",
-    "https://assembly.tokengo.top:8843/System.Linq.dll",
-    "https://assembly.tokengo.top:8843/System.Console.dll",
-    "https://assembly.tokengo.top:8843/System.Runtime.dll",
-    "https://assembly.tokengo.top:8843/System.Net.Http.dll",
-    "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
-    "https://assembly.tokengo.top:8843/System.Console.dll"]
-
+  assemblys = defaultAssemblys;
   // 初次加载默认加载这些程序集
   localStorage.setItem('assemblys', JSON.stringify(assemblys));
 }
@@ -73,6 +59,8 @@ window.self.MonacoEnvironment = {
 export default class App extends Component {
   state = {
     loading: true,
+    newShow: false,
+    newFileValue: "",
     code: 'Console.WriteLine("Hello World");',
     logContent: '',
     errprContent: '',
@@ -89,75 +77,26 @@ export default class App extends Component {
       y: -1000,
       value: null
     },
-    treeData: [
-      {
-        key: '1',
-        label: 'Hello World.cs',
-        isLeaf: true,
-        value: 'Hello World.cs',
-        isUpdate: false
-      },
-      {
-        key: '2',
-        label: 'Calculator.cs',
-        isLeaf: true,
-        value: 'Calculator.cs',
-        isUpdate: false
-      },
-      {
-        key: '3',
-        label: 'StudentAchievement.cs',
-        isLeaf: true,
-        value: 'StudentAchievement.cs',
-        isUpdate: false
-      },
-      {
-        key: '4',
-        label: '乘法表.cs',
-        isLeaf: true,
-        value: '乘法表.cs',
-        isUpdate: false
-      },
-      {
-        key: '5',
-        label: '判断偶数.cs',
-        isLeaf: true,
-        value: '判断偶数.cs',
-        isUpdate: false
-      },
-      {
-        key: '6',
-        label: '算和.cs',
-        isLeaf: true,
-        value: '算和.cs',
-        isUpdate: false
-      },
-      {
-        key: '7',
-        label: '冒泡排序.cs',
-        isLeaf: true,
-        value: '冒泡排序.cs',
-        isUpdate: false
-      },
-      {
-        key: '8',
-        label: '递归树形.cs',
-        isLeaf: true,
-        value: '递归树形.cs',
-        isUpdate: false
-      },
-      {
-        key: '9',
-        label: 'openai.cs',
-        isLeaf: true,
-        value: 'openai.cs',
-        isUpdate: false
-      }] as TreeNodeData[],
+    treeData: [] as TreeNodeData[],
     editor: null as unknown as monacoEditor.editor.IStandaloneCodeEditor,
     monaco: null as unknown as typeof monacoEditor
   }
 
   componentDidMount(): void {
+
+    const files = localStorage.getItem('files');
+    // 如果存在文件列表则加载
+    if (files) {
+      this.setState({
+        treeData: JSON.parse(files)
+      })
+    } else {
+      this.setState({
+        treeData: defaultFiles
+      })
+      localStorage.setItem('files', JSON.stringify(defaultFiles));
+    }
+
     document.addEventListener('click', (e) => this.handleClick());
 
     (window as any).WriteLine = (message: string) => {
@@ -177,9 +116,48 @@ export default class App extends Component {
     }
 
     this.onInit()
+    this.split()
   }
 
+  split() {
+    var splitter = document.getElementById('splitter')!;
+    var code = document.getElementById('code')!;
+    var render = document.getElementById('render')!;
 
+    var mouseDownHandler = function (e: any) {
+      // Prevent text selection
+      e.preventDefault();
+
+      // Set initial positions
+      var startPos = e.clientX;
+      let startLeftWidth = code!.offsetWidth;
+      let startRightWidth = render!.offsetWidth;
+
+      // Define the mouse move handler
+      var mouseMoveHandler = function (e: any) {
+        // Calculate the new widths
+        var newLeftWidth = startLeftWidth + (e.clientX - startPos);
+        var newRightWidth = startRightWidth - (e.clientX - startPos);
+
+        // Update the widths
+        code.style.width = newLeftWidth + 'px';
+        render.style.width = newRightWidth + 'px';
+      };
+
+      // Define the mouse up handler
+      var mouseUpHandler = function () {
+        // Remove the handlers
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+      };
+
+      // Add the handlers
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
+    };
+
+    splitter.addEventListener('mousedown', mouseDownHandler);
+  }
 
   componentWillUnmount(): void {
     document.removeEventListener('click', (e) => this.handleClick());
@@ -238,6 +216,7 @@ export default class App extends Component {
       this.setState({
         loading: false,
       })
+
     } catch {
       setTimeout(() => {
         this.onInit()
@@ -299,17 +278,61 @@ export default class App extends Component {
     return true;
   }
 
+  onNewFile() {
+    const { treeData, newFileValue } = this.state;
+    // 如果存在则不添加
+    if (treeData.find((item: any) => item.label === newFileValue)) {
+      Notification.error({
+        title: '错误',
+        content: '文件已存在',
+      });
+
+      return;
+    }
+
+    var treeDatas = [...treeData];
+    treeDatas.push(
+      { key: newFileValue, label: newFileValue, isLeaf: true, value: newFileValue, isUpdate: false }
+    );
+
+    localStorage.setItem('files', JSON.stringify(treeDatas));
+    localStorage.setItem(newFileValue, 'Console.WriteLine("Hello World");')
+    this.setState({
+      treeData: treeDatas,
+      newShow: false,
+      newFileValue: ''
+    });
+
+  }
+
+  getValue(value: any) {
+    var { editor } = this.state;
+
+    const code = localStorage.getItem(value);
+    if (code) {
+      editor.setValue(code)
+    } else {
+      axios.get(`/code/${value}`).then((res: any) => {
+        if (res.data) {
+          editor.setValue(res.data)
+        }
+      });
+    }
+  }
+
   render() {
-    var { code, loading, errprContent, logContent, contextMenu, depend, treeData, editor, assembly, assemblys } = this.state;
+    const { code, loading, errprContent, logContent, contextMenu, newShow, newFileValue, depend, treeData, assembly, assemblys } = this.state;
 
     const options = {
       selectOnLineNumbers: true,
       automaticLayout: true,
     };
-    const home = query.get('home') ?? "/";
+
+    const home = query.get('home');
+
     return (
       <Layout style={{ height: '100%', overflow: 'hidden' }}>
-        <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px',minWidth: '200px' }} >
+        <Sider style={{ backgroundColor: "var(--semi-color-bg-1)", width: '200px', minWidth: '200px' }} >
           <div style={{
             justifyContent: "space-between",
             padding: "10px",
@@ -318,77 +341,48 @@ export default class App extends Component {
           }}>
             Web IDE
           </div>
-          {home && <Button theme='borderless' block onClick={() => {
+          {home ? <Button theme='borderless' block onClick={() => {
             window.open(home, '_self');
-          }}>首页</Button>}
-          <div>
+          }}>首页</Button> : <></>}
+          <div style={{ maxHeight: 'calc(100vh - 180px)', overflow: 'auto' }}>
             <Tree
               treeData={treeData}
               defaultValue={'1'}
-              onChange={(e) => {
-                axios.get(`/code/${e}`).then((res: any) => {
-                  if (res.data) {
-                    editor.setValue(res.data)
-                  }
-                });
-              }}
+              onChange={(e) => this.getValue(e)}
               renderLabel={renderLabel}>
             </Tree>
           </div>
+          <Divider style={{ margin: 12 }} />
+          <Button block theme='borderless' onClick={() => this.onRunCode()}>执行代码</Button>
+          <Button block theme='borderless' onClick={() => this.setState({ newShow: true })}>新增文件</Button>
           <div><Button block theme='borderless' onClick={() => this.setState({
             depend: true
           })}>管理编译依赖</Button></div>
         </Sider>
-        <Layout
-          className="web-layout">
-          <Content style={{
-            height: 'max-content',
-          }}>
-            <div onContextMenu={(e) => this.handleContextMenu(e)} style={{ height: '100%', width: '100%', maxHeight: '100%' }}>
-              <Spin tip="编译预热中，请稍后..." spinning={loading}>
-                <MonacoEditor
-                  language="csharp"
-                  theme="vs-dark"
-                  value={code}
-                  height='calc(100vh - 150px)'
-                  options={options}
-                  onChange={(value, e) => this.onChange(value, e)}
-                  editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
-                />
-              </Spin>
-            </div>
-            {contextMenu && (
-              <Card
-                style={{
-                  top: contextMenu.y,
-                  left: contextMenu.x,
-                  backgroundColor: 'white'
-                }} className='menu'>
-                <Button theme='borderless' size='small' onClick={() => this.onRunCode()}>执行</Button>
-              </Card>
-            )}
-          </Content>
-          <Footer
-            style={{
-              justifyContent: "space-between",
-              height: "150px",
-              backgroundColor: 'var(--semi-color-bg-1)',
-              color: "var(--semi-color-text-2)",
-            }}>
-            <Tabs type="card" style={{ height: '100%' }}>
-              <TabPane tab="输出" itemKey="1" style={{ overflow: 'auto', maxHeight: '100px' }}>
-                <code style={{ whiteSpace: 'pre-wrap' }}>
-                  {logContent}
-                </code>
-              </TabPane>
-              <TabPane tab="错误" itemKey="2" style={{ overflow: 'auto', maxHeight: '100px' }}>
-                <code style={{ whiteSpace: 'pre-wrap', color: 'red' }}>
-                  {errprContent}
-                </code>
-              </TabPane>
-            </Tabs>
-          </Footer>
-        </Layout>
+        <div id="code">
+          <MonacoEditor
+            language="csharp"
+            theme="vs-dark"
+            value={code}
+            height='100%'
+            width={'100%'}
+            options={options}
+            onChange={(value, e) => this.onChange(value, e)}
+            editorDidMount={(editor, monaco) => this.editorDidMount(editor, monaco)}
+          />
+        </div>
+
+        <div id="splitter"></div>
+
+        <div id="render">
+          <MonacoEditor
+            language="text"
+            theme="vs-dark"
+            value={logContent}
+            height='100%'
+            width={'100%'}
+            options={options} />
+        </div>
         <Modal
           header={null}
           visible={depend}
@@ -429,6 +423,17 @@ export default class App extends Component {
             dragMainText={'点击上传文件或拖拽文件到这里'}
             dragSubText="上传程序集"
           ></Upload>
+        </Modal>
+        <Modal
+          header={null}
+          visible={newShow}
+          style={{ padding: '20px', textAlign: 'center' }}
+          onCancel={() => this.setState({ newShow: false })}
+          footer={[]}
+        >
+          <h2>新增文件</h2>
+          <Input style={{ margin: '5px' }} value={newFileValue} onChange={(e) => this.setState({ newFileValue: e })} placeholder='请输入文件名'></Input>
+          <Button block theme='borderless' onClick={() => this.onNewFile()}>新建</Button>
         </Modal>
       </Layout >
     )

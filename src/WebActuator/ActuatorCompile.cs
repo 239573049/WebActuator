@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Reactive.Disposables;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
 using WebActuator.Models;
@@ -18,8 +19,8 @@ public class ActuatorCompile
             Path.GetRandomFileName(),
             CSharpSyntaxTree.ParseText(options.Source, CSharpParseOptions.Default.WithKind(SourceCodeKind.Script)
                 .WithLanguageVersion(GlobalManage.LanguageVersion)), ReferenceManage.References,
-
-            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: GlobalManage.Using(), concurrentBuild: options.ConcurrentBuild),
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: GlobalManage.Using(),
+                concurrentBuild: options.ConcurrentBuild),
             GlobalManage.CSharpCompilation
         );
 
@@ -48,8 +49,15 @@ public class ActuatorCompile
     /// 执行Code
     /// </summary>
     /// <param name="code"></param>
+    /// <param name="onOutput"></param>
+    /// <param name="onError"></param>
+    /// <param name="diagnostic"></param>
+    /// <param name="concurrentBuild"></param>
+    /// <param name="exception"></param>
     /// <returns></returns>
-    public static async Task RunSubmission(string code, bool concurrentBuild = false, Action<DiagnosticDto[]>? diagnostic = null, Action<Exception>? exception = null)
+    public static void RunSubmission(string code, Action<string> onOutput,
+        Action<string> onError,
+        Action<DiagnosticDto[]>? diagnostic = null, bool concurrentBuild = false, Action<Exception>? exception = null)
     {
         try
         {
@@ -63,33 +71,47 @@ public class ActuatorCompile
             {
                 if (options.Diagnostics?.Any() == true)
                 {
-                    diagnostic?.Invoke(options.Diagnostics!.Select(x => new DiagnosticDto
+                    diagnostic?.Invoke(options.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error)!.Select(x => new DiagnosticDto
                     {
                         Code = x.Id,
                         Message = x.GetMessage(),
                         Severity = x.Severity
                     }).ToArray());
                 }
-                var entryPoint = GlobalManage.CSharpCompilation.GetEntryPoint(CancellationToken.None);
-                var type = options.Assembly.GetType($"{entryPoint!.ContainingNamespace.MetadataName}.{entryPoint?.ContainingType.MetadataName}");
-                var entryPointMethod = type?.GetMethod(entryPoint!.MetadataName);
 
-                var submission = (Func<object[], Task>)entryPointMethod!.CreateDelegate(typeof(Func<object[], Task>));
+                var entryPoint = EntryPointDiscoverer.FindStaticEntryMethod(options.Assembly);
 
-                // 如果不进行添加会出现超出索引
-                if (_submissionIndex >= _submissionStates.Length)
+                using var _ = ConsoleOutput.Subscribe(c => new CompositeDisposable
                 {
-                    Array.Resize(ref _submissionStates, Math.Max(_submissionIndex, _submissionStates.Length * 2));
-                }
-                // 执行代码 TODO: 执行方法携带Task无法执行
-                await submission.Invoke(_submissionStates);
+                    c.Out.Subscribe(onOutput),
+                    c.Error.Subscribe(onError)
+                });
 
+                try
+                {
+                    var parameters = entryPoint.GetParameters();
+                    if (parameters.Length != 0)
+                    {
+                        var parameterValues = parameters.Select(p =>
+                                p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null)
+                            .ToArray();
+                        entryPoint.Invoke(null, parameterValues);
+                    }
+                    else
+                    {
+                        entryPoint.Invoke(null, null);
+                    }
+                }
+                catch (Exception e)
+                {
+                    exception?.Invoke(e);
+                }
             }
             else
             {
                 if (options.Diagnostics?.Any() == true)
                 {
-                    diagnostic?.Invoke(options.Diagnostics!.Select(x => new DiagnosticDto
+                    diagnostic?.Invoke(options.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error)!.Select(x => new DiagnosticDto
                     {
                         Code = x.Id,
                         Message = x.GetMessage(),
@@ -97,7 +119,6 @@ public class ActuatorCompile
                     }).ToArray());
                 }
             }
-
         }
         catch (Exception ex)
         {

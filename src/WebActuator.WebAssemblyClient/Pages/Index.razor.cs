@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
+using System.Text.Json;
 
-namespace WebActuator.WebAssemblyClient.Pages;
+namespace WebActuator.WebAssemblyClient;
 
-public partial class Index
+public partial class Index : IDisposable
 {
     private const string Github = "https://github.com/239573049/WebActuator";
 
@@ -16,13 +17,27 @@ public partial class Index
 
     private MMonacoEditor Monaco;
 
+    private DotNetObjectReference<Index>? _objRef;
+
+    /// <summary>
+    /// 新增reference弹窗状态
+    /// </summary>
     private bool referenceDrawer = false;
+
+    /// <summary>
+    /// new File弹窗状态
+    /// </summary>
+    private bool newFileDrawer = false;
+
+    /// <summary>
+    /// 新文件名称
+    /// </summary>
+    private string newFileName = string.Empty;
 
     bool _drawer = true;
 
     private object Options = new
     {
-        value = "Console.WriteLine(\"Hello World！\");",
         language = "csharp",
         theme = "vs-dark",
         automaticLayout = true,
@@ -51,34 +66,26 @@ public partial class Index
 
     private List<string> _referenceAssembly
     {
-        get
-        {
-            return ReferenceManage.ReferenceKeys.ToList();
-        }
+        get { return ReferenceManage.ReferenceKeys.ToList(); }
     }
 
     private StringNumber _selectedItem = 1;
 
+    private StorageFile? selectStorageFile;
+
     private List<StorageFile> files = new();
 
-    protected override void OnInitialized()
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? Home { get; set; }
+
+    protected override async void OnInitialized()
     {
-        WebWriter.OnWrite = (m) =>
-        {
-            error += m;
-            RenderScroll();
-        };
-
-        files.Add(new StorageFile()
-        {
-            Name = "HelloWorld.cs",
-            Cotent = "Console.WriteLine(\"Hello World！\");",
-            CreatedTime = DateTime.Now
-        });
-
+        _objRef = DotNetObjectReference.Create(this);
     }
 
-    private async Task RunCode()
+    [JSInvokable(nameof(RunCode))]
+    public async Task RunCode()
     {
         if (first)
         {
@@ -92,10 +99,11 @@ public partial class Index
                 {
                 }
             }
+
             first = false;
         }
 
-        await ActuatorCompile.RunSubmission(value, false, diagnostic =>
+        ActuatorCompile.RunSubmission(value, onOutput: OnOutput, OnError, diagnostic =>
         {
             diagnostic.ForEach(async x =>
             {
@@ -103,12 +111,28 @@ public partial class Index
                 await InvokeAsync(StateHasChanged);
                 RenderScroll();
             });
-        }, async exception =>
+        }, false, async exception =>
         {
-            error += "编译异常：" + exception.Message + "\n";
+            error += "[error] " + exception.Message + "\n";
             await InvokeAsync(StateHasChanged);
             RenderScroll();
         });
+
+        await SaveFile();
+    }
+
+    private async void OnOutput(string output)
+    {
+        error += output;
+        await InvokeAsync(StateHasChanged);
+        RenderScroll();
+    }
+
+    private async void OnError(string err)
+    {
+        error += "[error] " + err + "\n";
+        await InvokeAsync(StateHasChanged);
+        RenderScroll();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -121,6 +145,26 @@ public partial class Index
 
                 await TryJSModule.Init();
             });
+
+            var result = await TryJSModule.GetValue("files");
+
+            if (string.IsNullOrEmpty(result))
+            {
+                files.Add(new StorageFile()
+                {
+                    Name = "HelloWorld.cs",
+                    Cotent = "internal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+                    CreatedTime = DateTime.Now
+                });
+
+                await SaveFile();
+            }
+            else
+            {
+                files = JsonSerializer.Deserialize<List<StorageFile>>(result) ?? new List<StorageFile>();
+            }
+
+            selectStorageFile = files.FirstOrDefault();
         }
     }
 
@@ -145,14 +189,72 @@ public partial class Index
         }
     }
 
+    private async Task InitMonaco()
+    {
+        // 监听CTRL+S
+        await Monaco.AddCommandAsync(2097, _objRef, nameof(RunCode));
+
+        await Monaco.SetValueAsync(selectStorageFile?.Cotent ?? "");
+    }
+
     private async Task Goto(string url)
     {
         await JSruntime.InvokeVoidAsync("open", url);
     }
 
-    private async Task SetValue(string value)
+    private async Task SetValue(StorageFile file)
     {
-        await Monaco.SetValueAsync(value);
+        selectStorageFile = file;
+        var result = await TryJSModule.GetValue(file.Name);
+        file.Cotent = result;
+        await Monaco.SetValueAsync(result);
     }
 
+    private async Task OnNewFile()
+    {
+        if (files.Any(x => x.Name == newFileName))
+        {
+            await PopupService.EnqueueSnackbarAsync("已经存在相同名称的文件", AlertTypes.Error);
+            return;
+        }
+
+        var file = new StorageFile()
+        {
+            Name = newFileName,
+            Cotent = "internal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+            CreatedTime = DateTime.Now
+        };
+
+        files.Add(file);
+
+        await SaveFile();
+
+        newFileDrawer = false;
+    }
+
+    private async Task SaveFile()
+    {
+        await TryJSModule.SetValue("files", files.Select(x => new
+        {
+            x.Name,
+            x.CreatedTime
+        }));
+
+        foreach (var file in files)
+        {
+            if (file.Name == selectStorageFile?.Name)
+            {
+                file.Cotent = value;
+            }
+
+            await TryJSModule.SetValue(file.Name, file.Cotent);
+        }
+
+
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
 }
