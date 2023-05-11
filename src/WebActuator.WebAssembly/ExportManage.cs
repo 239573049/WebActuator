@@ -78,14 +78,14 @@ public partial class ExportManage
     [JSInvokable]
     public static async Task RunSubmission(string code, bool concurrentBuild = false)
     {
-        await ActuatorCompile.RunSubmission(code, concurrentBuild, async (diagnostic) =>
-        {
-            var result = JsonSerializer.Serialize(diagnostic);
-            await WebActuatorApp.GetRequiredService<IJSRuntime>().InvokeVoidAsync("OnDiagnostic", result);
-        }, async (exception) =>
-        {
-            await WebActuatorApp.GetRequiredService<IJSRuntime>().InvokeVoidAsync("OnException", exception.Message);
-        });
+        // await ActuatorCompile.RunSubmission(code, concurrentBuild, async (diagnostic) =>
+        // {
+        //     var result = JsonSerializer.Serialize(diagnostic);
+        //     await WebActuatorApp.GetRequiredService<IJSRuntime>().InvokeVoidAsync("OnDiagnostic", result);
+        // }, async (exception) =>
+        // {
+        //     await WebActuatorApp.GetRequiredService<IJSRuntime>().InvokeVoidAsync("OnException", exception.Message);
+        // });
     }
 
 }

@@ -37,7 +37,7 @@ public partial class GlobalManage
 
     #region Language Version Setting
 
-    private static LanguageVersion languageVersion = LanguageVersion.Preview;
+    private static LanguageVersion languageVersion = LanguageVersion.CSharp9;
 
     public static LanguageVersion LanguageVersion => languageVersion;
 
