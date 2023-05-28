@@ -69,7 +69,7 @@ public partial class Index : IDisposable
         get { return ReferenceManage.ReferenceKeys.ToList(); }
     }
 
-    private StringNumber _selectedItem = 1;
+    private StringNumber _selectedItem = 0;
 
     private StorageFile? selectStorageFile;
 
@@ -79,9 +79,10 @@ public partial class Index : IDisposable
     [Parameter]
     public string? Home { get; set; }
 
-    protected override async void OnInitialized()
+    protected override void OnInitialized()
     {
         _objRef = DotNetObjectReference.Create(this);
+
     }
 
     [JSInvokable(nameof(RunCode))]
@@ -164,6 +165,13 @@ public partial class Index : IDisposable
                 files = JsonSerializer.Deserialize<List<StorageFile>>(result) ?? new List<StorageFile>();
             }
 
+            var name = files.FirstOrDefault()?.Name;
+            if (!string.IsNullOrEmpty(name))
+            {
+                await Monaco.SetValueAsync(await TryJSModule.GetValue(name));
+            }
+
+
             selectStorageFile = files.FirstOrDefault();
         }
     }
@@ -194,7 +202,10 @@ public partial class Index : IDisposable
         // 监听CTRL+S
         await Monaco.AddCommandAsync(2097, _objRef, nameof(RunCode));
 
-        await Monaco.SetValueAsync(selectStorageFile?.Cotent ?? "");
+        if (!string.IsNullOrEmpty(selectStorageFile?.Cotent))
+        {
+            await Monaco.SetValueAsync(selectStorageFile.Cotent);
+        }
     }
 
     private async Task Goto(string url)

@@ -56,6 +56,14 @@ internal class Program
     }
 }`,
                 range: range,
+            },
+            {
+                label: 'cw',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "生成一个Console.WriteLine方法",
+                insertText:
+                    `Console.WriteLine("");`,
+                range: range,
             }
         ];
     }
