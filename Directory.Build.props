@@ -1,7 +1,6 @@
 ﻿<Project>
 	<PropertyGroup>
 		<Author>Token</Author>
-		<AssemblyName>Gotrays.WebActuator</AssemblyName>
 		<VersionPrefix>0.0.1</VersionPrefix>
 	</PropertyGroup>
 </Project>

@@ -4,21 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Description>WebActuator 用于编译生成程序集</Description>
-        <PackageProjectUrl>https://github.com/239573049/WebActuator</PackageProjectUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RepositoryUrl>https://github.com/239573049/WebActuator</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Authors>$(Author)</Authors>
     </PropertyGroup>
-
-    <ItemGroup>
-      <None Include="..\..\README.md">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Reactive" Version="5.0.0" />

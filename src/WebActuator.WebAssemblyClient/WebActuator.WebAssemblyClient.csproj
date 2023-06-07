@@ -36,4 +36,5 @@
 		<BlazorWebAssemblyLazyLoad Include="System.Drawing.dll" />
 		<BlazorWebAssemblyLazyLoad Include="System.Drawing.Primitives.dll" />
 	</ItemGroup>
+
 </Project>
