@@ -260,8 +260,6 @@ public partial class Index : IDisposable
 
             await TryJSModule.SetValue(file.Name, file.Cotent);
         }
-
-
     }
 
     public void Dispose()
