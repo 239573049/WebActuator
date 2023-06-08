@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using WebActuator.WebAssemblyClient;
+﻿using WebActuator.WebAssemblyClient;
 
-namespace Examples.Shared
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
+        
         public static IServiceCollection AddShared(this IServiceCollection services,string baseAddress)
         {
             services.AddMasaBlazor(options =>

@@ -1,3 +1,7 @@
+h1:focus {
+    outline: none;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -13,7 +17,7 @@
     #blazor-error-ui .dismiss {
         cursor: pointer;
         position: absolute;
-        right: 3.5rem;
+        right: 0.75rem;
         top: 0.5rem;
     }
 

@@ -4,56 +4,55 @@
 @inject IPopupService PopupService
 @inject TryJSModule TryJSModule
 
-
-
 <MNavigationDrawer @bind-Value="_drawer"
                           App
                           Permanent
                           Floating
-                   MiniVariantWidth="300">
-    <div style="float:left;width: 60px;height: 100%;">
-        <MAvatar Class="d-block text-center mx-auto mt-4"
-                 Size="36">
-            <MImage Src="/csharp.png"></MImage>
-        </MAvatar>
+                          Width="275"
+                    MiniVariantWidth="255">
+     <div style="float:left;width: 60px;height: 100%;">
+         <MAvatar Class="d-block text-center mx-auto mt-4"
+                  Size="36">
+             <MImage Src="/csharp.png"></MImage>
+         </MAvatar>
 
-        <MDivider Class="mx-3 my-5"></MDivider>
+         <MDivider Class="mx-3 my-5"></MDivider>
 
-        @if (!string.IsNullOrEmpty(Home))
+         @if (!string.IsNullOrEmpty(Home))
         {
             <MButton OnClick="async ()=>await Goto(Home)" Class="github" Target="_blank" Icon XLarge>
-            <MIcon>mdi-home</MIcon>
-        </MButton>
+             <MIcon>mdi-home</MIcon>
+         </MButton>
         }
 
         <MTooltip Right>
             <ActivatorContent>
                 <MButton Icon XLarge OnClick="RunCode" @attributes="@context.Attrs">
-                    <MIcon>mdi-play</MIcon>
-                </MButton>
-            </ActivatorContent>
-            <ChildContent>
-                Ctrl + S
-            </ChildContent>
-        </MTooltip>
+                     <MIcon>mdi-play</MIcon>
+                 </MButton>
+             </ActivatorContent>
+             <ChildContent>
+                 Ctrl + S
+             </ChildContent>
+         </MTooltip>
 
-        <MDialog @bind-Value="referenceDrawer"
-                 Width="650">
-            <ActivatorContent>
+         <MDialog @bind-Value="referenceDrawer"
+                  Width="650">
+             <ActivatorContent>
 
-                <MButton Icon XLarge OnClick="RunCode" @attributes="@context.Attrs">
-                    <MIcon>mdi-memory</MIcon>
-                </MButton>
-            </ActivatorContent>
+                 <MButton Icon XLarge OnClick="RunCode" @attributes="@context.Attrs">
+                     <MIcon>mdi-memory</MIcon>
+                 </MButton>
+             </ActivatorContent>
 
-            <ChildContent>
-                <MCard>
-                    <MCardTitle Class="text-h5 grey lighten-2">
-                        编译依赖项
-                    </MCardTitle>
+             <ChildContent>
+                 <MCard>
+                     <MCardTitle Class="text-h5 grey lighten-2">
+                         编译依赖项
+                     </MCardTitle>
 
-                    <MListItemGroup Class="pl-14">
-                        @foreach (var item in _referenceAssembly)
+                     <MListItemGroup Class="pl-14">
+                         @foreach (var item in _referenceAssembly)
                         {
                             <MListItem>
                                 <MListItemContent>
@@ -67,28 +66,21 @@
 
                         <MTextField @bind-Value=_reference>
                             <AppendOuterContent>
-                                <MButton Text OnClick="async ()=>{
-    try{
-        await OnAddReference(_reference);
-    }finally{
-        _reference=string.Empty;
-        _=InvokeAsync(StateHasChanged);
-    }
-}">添加</MButton>
-                            </AppendOuterContent>
-                        </MTextField>
+                                <MButton Text OnClick="AddAssembly">添加</MButton>
+                             </AppendOuterContent>
+                         </MTextField>
 
-                        <MSpacer></MSpacer>
-                        <MButton Color="primary"
+                         <MSpacer></MSpacer>
+                         <MButton Color="primary"
                                       Text
-                                 OnClick="() => referenceDrawer = false">
-                            关闭
-                        </MButton>
-                    </MCardActions>
-                </MCard>
-            </ChildContent>
-        </MDialog>
-        <MButton OnClick="async ()=>await Goto(Github)" Class="github" Target="_blank" Icon XLarge>
+                                  OnClick="() => referenceDrawer = false">
+                             关闭
+                         </MButton>
+                     </MCardActions>
+                 </MCard>
+             </ChildContent>
+         </MDialog>
+         <MButton OnClick="async ()=>await Goto(Github)" Class="github" Target="_blank" Icon XLarge>
             <MIcon>mdi-github</MIcon>
         </MButton>
 
@@ -99,114 +91,114 @@
                         Color="primary">
             @foreach (var item in files)
             {
-                <MListItem OnClick="async ()=> await SetValue(item)">
+                <MListItem OnClick="async ()=> await SetValue(item)" Style="width: 190px;">
                     <MListItemIcon>
                         <MIcon>mdi-file</MIcon>
                     </MListItemIcon>
 
                     <MListItemContent>
-                        <MListItemTitle>@item.Name <MIcon>mdi-close</MIcon></MListItemTitle>
+                        <MListItemTitle>@item.Name <MIcon Style="float: right;" OnClick="async()=>await OnCloseFile(item)">mdi-close</MIcon></MListItemTitle>
                     </MListItemContent>
                 </MListItem>
             }
             <PModal @bind-Value=newFileDrawer
                     Persistent
-                    OnCancel="()=>{newFileDrawer=false;}"
-                    Title="Title"
-                    Width="500">
-                <ActivatorContent>
-                    <MButton Text Block @attributes="@context.Attrs">新增文件</MButton>
-                </ActivatorContent>
-                <ChildContent>
-                    <MTextField @bind-Value="newFileName"
-                                Label="新文件名称"
+                     OnCancel="()=>{newFileDrawer=false;}"
+                     Title="新建文件"
+                     Width="500">
+                 <ActivatorContent>
+                     <MButton Text Block @attributes="@context.Attrs" Width="@("190px")">新增文件</MButton>
+                 </ActivatorContent>
+                 <ChildContent>
+                     <MTextField @bind-Value="newFileName"
+                                 Label="新文件名称"
                                     Clearable></MTextField>
-                    <MButton Text Block OnClick="OnNewFile">新增</MButton>
-                </ChildContent>
-            </PModal>
-        </MListItemGroup>
-    </MList>
+                     <MButton Text Block OnClick="OnNewFile">新增</MButton>
+                 </ChildContent>
+             </PModal>
+         </MListItemGroup>
+     </MList>
 
-</MNavigationDrawer>
+ </MNavigationDrawer>
 
-<MMain>
-    <div id="code">
-        <MMonacoEditor InitCompleteHandle="async()=>await InitMonaco()" @bind-Value=value @ref=Monaco Height="@("100%")" EditorOptions="Options"></MMonacoEditor>
-    </div>
+ <MMain>
+     <div id="code">
+         <MMonacoEditor InitCompleteHandle="async()=>await InitMonaco()" @bind-Value=value @ref=Monaco Height="@("100%")" EditorOptions="Options"></MMonacoEditor>
+     </div>
 
-    <div id="splitter"></div>
+     <div id="splitter"></div>
 
-    <div id="render">
-        <Logger @bind-Value="error" />
-    </div>
-</MMain>
-
-
-<style>
-    #code {
-        width: 50%;
-        height: 100%;
-        float: left;
-    }
-
-        #code .editor-group {
-            height: 100%;
-        }
-
-            #code .editor-group .custom-editor {
-                height: calc(100% - 48px);
-            }
-
-    #render {
-        width: 49%;
-        height: 100%;
-        float: right;
-        padding: 5px;
-        overflow-y: auto;
-        max-height: 100vh;
-    }
-
-    #splitter {
-        width: 4px;
-        height: 100%;
-        float: left;
-        cursor: col-resize;
-        background-color: #6b80bb;
-    }
-
-    .m-progress-circular {
-        margin: 1rem;
-    }
+     <div id="render">
+         <Logger @bind-Value="error" />
+     </div>
+ </MMain>
 
 
-    /* 滚动条整体样式 */
-    ::-webkit-scrollbar {
-        width: 10px;
-        /* 设置滚动条宽度 */
-        height: 10px;
-        /* 设置滚动条高度 */
-    }
+ <style>
+     #code {
+         width: 50%;
+         height: 100%;
+         float: left;
+     }
 
-    /* 滚动条轨道样式 */
-    ::-webkit-scrollbar-track {
-        background-color: #f5f5f5;
-        /* 设置滚动条轨道背景色 */
-    }
+         #code .editor-group {
+             height: 100%;
+         }
 
-    /* 滚动条滑块样式 */
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(to bottom, #f7d9e1, #f5a5b8);
-        /* 设置滚动条滑块渐变色 */
-        border-radius: 5px;
-        /* 设置滚动条滑块圆角 */
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-        /* 设置滚动条滑块阴影效果 */
-    }
+             #code .editor-group .custom-editor {
+                 height: calc(100% - 48px);
+             }
 
-        /* 滚动条滑块悬停样式 */
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(to bottom, #f5a5b8, #f7d9e1);
-            /* 设置滚动条滑块悬停时的渐变色 */
-        }
+     #render {
+         width: 49%;
+         height: 100%;
+         float: right;
+         padding: 5px;
+         overflow-y: auto;
+         max-height: 100vh;
+     }
 
-</style>
+     #splitter {
+         width: 4px;
+         height: 100%;
+         float: left;
+         cursor: col-resize;
+         background-color: #6b80bb;
+     }
+
+     .m-progress-circular {
+         margin: 1rem;
+     }
+
+
+     /* 滚动条整体样式 */
+     ::-webkit-scrollbar {
+         width: 10px;
+         /* 设置滚动条宽度 */
+         height: 10px;
+         /* 设置滚动条高度 */
+     }
+
+     /* 滚动条轨道样式 */
+     ::-webkit-scrollbar-track {
+         background-color: #f5f5f5;
+         /* 设置滚动条轨道背景色 */
+     }
+
+     /* 滚动条滑块样式 */
+     ::-webkit-scrollbar-thumb {
+         background: linear-gradient(to bottom, #f7d9e1, #f5a5b8);
+         /* 设置滚动条滑块渐变色 */
+         border-radius: 5px;
+         /* 设置滚动条滑块圆角 */
+         box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+         /* 设置滚动条滑块阴影效果 */
+     }
+
+         /* 滚动条滑块悬停样式 */
+         ::-webkit-scrollbar-thumb:hover {
+             background: linear-gradient(to bottom, #f5a5b8, #f7d9e1);
+             /* 设置滚动条滑块悬停时的渐变色 */
+         }
+
+ </style>

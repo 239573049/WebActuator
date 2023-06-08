@@ -64,6 +64,38 @@ internal class Program
                 insertText:
                     `Console.WriteLine("");`,
                 range: range,
+            },
+            {
+                label: 'prop',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "生成一个属性",
+                insertText:
+                    `public TYPE Type { get; set; }`,
+                range: range,
+            },
+            {
+                label: 'propg',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "生成一个私有set的属性",
+                insertText:
+                    `public int I { get; private set; }`,
+                range: range,
+            },
+            {
+                label: 'pci',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "生成一个常量int类",
+                insertText:
+                    `public const int `,
+                range: range,
+            },
+            {
+                label: 'pcs',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "生成一个常量string类",
+                insertText:
+                    `public const string`,
+                range: range,
             }
         ];
     }

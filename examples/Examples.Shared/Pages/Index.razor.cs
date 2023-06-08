@@ -1,5 +1,4 @@
-﻿using Examples.Shared.Models;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
 using System.Text.Json;
@@ -67,10 +66,7 @@ public partial class Index : IDisposable
 
     private string _reference = string.Empty;
 
-    private List<string> _referenceAssembly
-    {
-        get { return ReferenceManage.ReferenceKeys.ToList(); }
-    }
+    private List<string> _referenceAssembly => ReferenceManage.ReferenceKeys.ToList();
 
     private StringNumber _selectedItem = 0;
 
@@ -130,6 +126,19 @@ public partial class Index : IDisposable
         error += output;
         await InvokeAsync(StateHasChanged);
         RenderScroll();
+    }
+
+    private async Task AddAssembly()
+    {
+        try
+        {
+            await OnAddReference(_reference);
+        }
+        finally
+        {
+            _reference = string.Empty;
+            _ = InvokeAsync(StateHasChanged);
+        }
     }
 
     private async void OnError(string err)
@@ -263,6 +272,17 @@ public partial class Index : IDisposable
 
             await TryJSModule.SetValue(file.Name, file.Cotent);
         }
+    }
+
+    private async Task OnCloseFile(StorageFile file)
+    {
+        if (files.Count == 0)
+        {
+            return;
+        }
+        await TryJSModule.RemoveValue(file.Name);
+        files.Remove(file);
+        await SaveFile();
     }
 
     public void Dispose()
