@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
+using System.Net.Http.Json;
 using System.Text.Json;
 using WebActuator;
 using WebActuator.WebAssemblyClient;
@@ -78,6 +79,9 @@ public partial class Index : IDisposable
     [Parameter]
     public string? Home { get; set; }
 
+    [Parameter]
+    public string? Code { get; set; }
+
     protected override void OnInitialized()
     {
         _objRef = DotNetObjectReference.Create(this);
@@ -121,6 +125,10 @@ public partial class Index : IDisposable
         await SaveFile();
     }
 
+    /// <summary>
+    /// 监听日志输出
+    /// </summary>
+    /// <param name="output"></param>
     private async void OnOutput(string output)
     {
         error += output;
@@ -177,15 +185,38 @@ public partial class Index : IDisposable
                 files = JsonSerializer.Deserialize<List<StorageFile>>(result) ?? new List<StorageFile>();
             }
 
-            var name = files.FirstOrDefault()?.Name;
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(Code))
             {
-                await Monaco.SetValueAsync(await TryJSModule.GetValue(name));
+                try
+                {
+                    var code = await GlobalManage.HttpClient.GetStringAsync("http://localhost:5102/api/v1/CodeManages/Code?key=" + Code);
+                    if (!string.IsNullOrEmpty(code))
+                    {
+                        await Monaco.SetValueAsync(code);
+                    }
+                }
+                catch
+                {
+                    await InitMonacoData();
+                }
+            }
+            else
+            {
+                await InitMonacoData();
             }
 
-
-            selectStorageFile = files.FirstOrDefault();
         }
+    }
+
+    private async Task InitMonacoData()
+    {
+        var name = files.FirstOrDefault()?.Name;
+        if (!string.IsNullOrEmpty(name))
+        {
+            await Monaco.SetValueAsync(await TryJSModule.GetValue(name));
+        }
+
+        selectStorageFile = files.FirstOrDefault();
     }
 
     private void RenderScroll()
@@ -227,10 +258,18 @@ public partial class Index : IDisposable
 
     private async Task SetValue(StorageFile file)
     {
-        selectStorageFile = file;
-        var result = await TryJSModule.GetValue(file.Name);
-        file.Cotent = result;
-        await Monaco.SetValueAsync(result);
+        if (file == selectStorageFile)
+        {
+            selectStorageFile = null;
+            await Monaco.SetValueAsync(string.Empty);
+        }
+        else
+        {
+            selectStorageFile = file;
+            var result = await TryJSModule.GetValue(file.Name);
+            file.Cotent = result;
+            await Monaco.SetValueAsync(result);
+        }
     }
 
     private async Task OnNewFile()
@@ -268,9 +307,40 @@ public partial class Index : IDisposable
             if (file.Name == selectStorageFile?.Name)
             {
                 file.Cotent = value;
+                await TryJSModule.SetValue(file.Name, file.Cotent);
             }
 
-            await TryJSModule.SetValue(file.Name, file.Cotent);
+        }
+    }
+
+    private async Task CreateCodeSharedAsync()
+    {
+        var code = await Monaco.GetValueAsync();
+        var result = await GlobalManage.HttpClient.PostAsJsonAsync("http://localhost:5102/api/v1/CodeManages/Code", new
+        {
+            code,
+        });
+
+        if (result.IsSuccessStatusCode)
+        {
+            var href = await TryJSModule.GetHref();
+
+            // 设置粘贴板
+            await TryJSModule.SetClipboard(href + await result.Content.ReadAsStringAsync());
+
+            await PopupService.EnqueueSnackbarAsync(new Masa.Blazor.Presets.SnackbarOptions()
+            {
+                Title = "已复制到粘贴板",
+                Type = AlertTypes.Success
+            });
+        }
+        else
+        {
+            await PopupService.EnqueueSnackbarAsync(new Masa.Blazor.Presets.SnackbarOptions()
+            {
+                Title = "生成共享码错误",
+                Type = AlertTypes.Error
+            });
         }
     }
 

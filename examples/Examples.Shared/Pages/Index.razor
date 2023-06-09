@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/{Code?}"
 @namespace Examples.Shared
 @inject IJSRuntime JSruntime
 @inject IPopupService PopupService
@@ -22,8 +22,20 @@
         {
             <MButton OnClick="async ()=>await Goto(Home)" Class="github" Target="_blank" Icon XLarge>
              <MIcon>mdi-home</MIcon>
-         </MButton>
+            </MButton>
         }
+        
+        <MTooltip Right>
+            <ActivatorContent>
+                <MButton Icon XLarge OnClick="CreateCodeSharedAsync" @attributes="@context.Attrs">
+                    <MIcon>mdi-qrcode</MIcon>
+                 </MButton>
+             </ActivatorContent>
+             <ChildContent>
+                 生成共享代码
+             </ChildContent>
+         </MTooltip>
+
 
         <MTooltip Right>
             <ActivatorContent>

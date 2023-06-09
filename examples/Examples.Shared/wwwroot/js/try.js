@@ -150,10 +150,35 @@ function renderScroll() {
     element.scrollTop = element.scrollHeight;
 }
 
+function setClipboard(value) {
+
+    // 创建一个临时的textarea元素
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = value;
+
+    // 将textarea元素添加到DOM中
+    document.body.appendChild(tempTextArea);
+
+    // 选择文本
+    tempTextArea.select();
+
+    // 复制文本到剪贴板
+    document.execCommand('copy');
+
+    // 删除临时的textarea元素
+    document.body.removeChild(tempTextArea);
+}
+
+function getHref() {
+    return window.location.href;
+}
+
 export {
     init,
     renderScroll,
     setValue,
     getValue,
-    removeValue
+    removeValue,
+    setClipboard,
+    getHref
 }

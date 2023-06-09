@@ -1,5 +1,6 @@
 ﻿using BlazorComponent.JSInterop;
 using Microsoft.JSInterop;
+using Microsoft.VisualBasic;
 using System.Text.Json;
 
 namespace WebActuator.WebAssemblyClient;
@@ -52,5 +53,15 @@ public class TryJSModule : JSModule
     public async ValueTask RemoveValue(string key)
     {
         await InvokeVoidAsync("removeValue", key);
+    }
+
+    public async ValueTask SetClipboard(string value)
+    {
+        await InvokeVoidAsync("setClipboard", value);
+    }
+
+    public async ValueTask<string> GetHref()
+    {
+        return await InvokeAsync<string>("getHref");
     }
 }
