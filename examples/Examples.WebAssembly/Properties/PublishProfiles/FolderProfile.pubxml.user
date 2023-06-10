@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\.NET\web-actuator\examples\Examples.WebAssembly\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
+    <History>True|2023-06-10T12:23:50.2483534Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

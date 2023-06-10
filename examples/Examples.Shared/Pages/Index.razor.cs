@@ -189,7 +189,7 @@ public partial class Index : IDisposable
             {
                 try
                 {
-                    var code = await GlobalManage.HttpClient.GetStringAsync("http://localhost:5102/api/v1/CodeManages/Code?key=" + Code);
+                    var code = await GlobalManage.HttpClient.GetStringAsync("https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code?key=" + Code);
                     if (!string.IsNullOrEmpty(code))
                     {
                         await Monaco.SetValueAsync(code);
@@ -316,7 +316,7 @@ public partial class Index : IDisposable
     private async Task CreateCodeSharedAsync()
     {
         var code = await Monaco.GetValueAsync();
-        var result = await GlobalManage.HttpClient.PostAsJsonAsync("http://localhost:5102/api/v1/CodeManages/Code", new
+        var result = await GlobalManage.HttpClient.PostAsJsonAsync("https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code", new
         {
             code,
         });

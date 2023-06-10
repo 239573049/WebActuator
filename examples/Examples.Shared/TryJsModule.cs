@@ -1,6 +1,5 @@
 ﻿using BlazorComponent.JSInterop;
 using Microsoft.JSInterop;
-using Microsoft.VisualBasic;
 using System.Text.Json;
 
 namespace WebActuator.WebAssemblyClient;

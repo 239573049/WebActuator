@@ -12,7 +12,7 @@ namespace Examples.Service.Services
         static CodeManageService()
         {
             // 定义缓存最大数量
-            channel = Channel.CreateBounded<string>(new BoundedChannelOptions(5000)
+            channel = Channel.CreateBounded<string>(new BoundedChannelOptions(50000)
             {
                 FullMode = BoundedChannelFullMode.DropOldest
             }, item =>
