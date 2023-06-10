@@ -11,7 +11,7 @@ namespace Examples.Service.Services
 
         static CodeManageService()
         {
-            // 定义缓存最大数量
+            // 定义缓存最大数量v
             channel = Channel.CreateBounded<string>(new BoundedChannelOptions(50000)
             {
                 FullMode = BoundedChannelFullMode.DropOldest
