@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
+using System.Runtime.Loader;
 using System.Text.Json;
 using WebActuator;
 using WebActuator.WebAssemblyClient;
@@ -106,6 +107,8 @@ public partial class Index : IDisposable
 
             first = false;
         }
+
+
 
         ActuatorCompile.RunSubmission(value, onOutput: OnOutput, OnError, diagnostic =>
         {
@@ -232,7 +235,7 @@ public partial class Index : IDisposable
     {
         try
         {
-            using var stream = await GlobalManage.HttpClient.GetStreamAsync(v);
+            await using var stream = await GlobalManage.HttpClient.GetStreamAsync(v);
             ReferenceManage.AddReference(v, MetadataReference.CreateFromStream(stream));
         }
         catch
