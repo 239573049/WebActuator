@@ -38,95 +38,158 @@ function init() {
 
     splitter.addEventListener('mousedown', mouseDownHandler);
 }
+async function sendRequest(type, request) {
+    let endPoint;
+    switch (type) {
+        case 'complete': endPoint = 'https://web-actuator-api.tokengo.top:8843/completion/complete'; break;
+        case 'signature': endPoint = 'https://web-actuator-api.tokengo.top:8843/completion/signature'; break;
+        case 'hover': endPoint = 'https://web-actuator-api.tokengo.top:8843/completion/hover'; break;
+        case 'codeCheck': endPoint = 'https://web-actuator-api.tokengo.top:8843/completion/codeCheck'; break;
+    }
+    return await axios.post(endPoint, JSON.stringify(request))
+}
 
 function initLanguages() {
-    function createDependencyProposals(range) {
-        return [
-            {
-                label: 'psvm',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个Main方法",
-                insertText:
-                    `
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        Console.WriteLine("Hello World!");
-    }
-}`,
-                range: range,
-            },
-            {
-                label: 'cw',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个Console.WriteLine方法",
-                insertText:
-                    `Console.WriteLine("");`,
-                range: range,
-            },
-            {
-                label: 'prop',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个属性",
-                insertText:
-                    `public TYPE Type { get; set; }`,
-                range: range,
-            },
-            {
-                label: 'propg',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个私有set的属性",
-                insertText:
-                    `public int I { get; private set; }`,
-                range: range,
-            },
-            {
-                label: 'pci',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个常量int类",
-                insertText:
-                    `public const int `,
-                range: range,
-            },
-            {
-                label: 'pcs',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "生成一个常量string类",
-                insertText:
-                    `public const string`,
-                range: range,
+
+    var assemblies = ['System.Text.Json.dll'];
+
+    monaco.languages.registerCompletionItemProvider('csharp', {
+        triggerCharacters: [".", " "],
+        provideCompletionItems: async (model, position) => {
+            let suggestions = [];
+
+            let request = {
+                Code: model.getValue(),
+                Position: model.getOffsetAt(position),
+                Assemblies: assemblies
             }
-        ];
-    }
 
-    monaco.languages.register({id: "logger"});
-    monaco.languages.setMonarchTokensProvider("logger", {
-        tokenizer: {
-            root: [
-                [/\[error.*/, "custom-error"],
-                [/\[notice.*/, "custom-notice"],
-                [/\[info.*/, "custom-info"],
-                [/\[[a-zA-Z 0-9:]+\]/, "custom-date"],
-            ],
-        },
+            let resultQ = await sendRequest("complete", request);
+
+            for (let elem of resultQ.data) {
+                suggestions.push({
+                    label: {
+                        label: elem.Suggestion,
+                        description: elem.Description
+                    },
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    insertText: elem.Suggestion
+                });
+            }
+
+            return { suggestions: suggestions };
+        }
     });
 
-    monaco.languages.registerCompletionItemProvider("csharp", {
-        provideCompletionItems: function (model, position) {
-            var word = model.getWordUntilPosition(position);
-            var range = {
-                startLineNumber: position.lineNumber,
-                endLineNumber: position.lineNumber,
-                startColumn: word.startColumn,
-                endColumn: word.endColumn,
-            };
+    monaco.languages.registerSignatureHelpProvider('csharp', {
+        signatureHelpTriggerCharacters: ["("],
+        signatureHelpRetriggerCharacters: [","],
+
+        provideSignatureHelp: async (model, position, token, context) => {
+
+            let request = {
+                Code: model.getValue(),
+                Position: model.getOffsetAt(position),
+                Assemblies: assemblies
+            }
+
+            let resultQ = await sendRequest("signature", request);
+            if (!resultQ.data) return;
+
+            let signatures = [];
+            for (let signature of resultQ.data.Signatures) {
+                let params = [];
+                for (let param of signature.Parameters) {
+                    params.push({
+                        label: param.Label,
+                        documentation: param.Documentation ?? ""
+                    });
+                }
+
+                signatures.push({
+                    label: signature.Label,
+                    documentation: signature.Documentation ?? "",
+                    parameters: params,
+                });
+            }
+
+            let signatureHelp = {};
+            signatureHelp.signatures = signatures;
+            signatureHelp.activeParameter = resultQ.data.ActiveParameter;
+            signatureHelp.activeSignature = resultQ.data.ActiveSignature;
+
             return {
-                suggestions: createDependencyProposals(range),
+                value: signatureHelp,
+                dispose: () => { }
             };
-        },
+        }
     });
 
+
+    monaco.languages.registerHoverProvider('csharp', {
+        provideHover: async function (model, position) {
+
+            let request = {
+                Code: model.getValue(),
+                Position: model.getOffsetAt(position),
+                Assemblies: assemblies
+            }
+
+            let resultQ = await sendRequest("hover", request);
+
+            if (resultQ.data) {
+                const posStart = model.getPositionAt(resultQ.data.OffsetFrom);
+                const posEnd = model.getPositionAt(resultQ.data.OffsetTo);
+
+                return {
+                    range: new monaco.Range(posStart.lineNumber, posStart.column, posEnd.lineNumber, posEnd.column),
+                    contents: [
+                        { value: resultQ.data.Information }
+                    ]
+                };
+            }
+
+            return null;
+        }
+    });
+
+    monaco.editor.onDidCreateModel(function (model) {
+        async function validate() {
+
+            let request = {
+                Code: model.getValue(),
+                Assemblies: assemblies
+            }
+
+            let resultQ = await sendRequest("codeCheck", request)
+
+            let markers = [];
+
+            for (let elem of resultQ.data) {
+                const posStart = model.getPositionAt(elem.OffsetFrom);
+                const posEnd = model.getPositionAt(elem.OffsetTo);
+                markers.push({
+                    severity: elem.Severity,
+                    startLineNumber: posStart.lineNumber,
+                    startColumn: posStart.column,
+                    endLineNumber: posEnd.lineNumber,
+                    endColumn: posEnd.column,
+                    message: elem.Message,
+                    code: elem.Id
+                });
+            }
+
+            monaco.editor.setModelMarkers(model, 'csharp', markers);
+        }
+
+        var handle = null;
+        model.onDidChangeContent(() => {
+            monaco.editor.setModelMarkers(model, 'csharp', []);
+            clearTimeout(handle);
+            handle = setTimeout(() => validate(), 500);
+        });
+        validate();
+    });
 }
 
 function setValue(key, value) {

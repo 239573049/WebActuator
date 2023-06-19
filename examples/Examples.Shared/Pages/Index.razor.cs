@@ -174,7 +174,7 @@ public partial class Index : IDisposable
                 files.Add(new StorageFile()
                 {
                     Name = "HelloWorld.cs",
-                    Cotent = "internal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+                    Cotent = "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
                     CreatedTime = DateTime.Now
                 });
 
@@ -283,7 +283,7 @@ public partial class Index : IDisposable
         var file = new StorageFile()
         {
             Name = newFileName,
-            Cotent = "internal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+            Cotent = "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
             CreatedTime = DateTime.Now
         };
 
@@ -307,6 +307,10 @@ public partial class Index : IDisposable
             if (file.Name == selectStorageFile?.Name)
             {
                 file.Cotent = value;
+                await TryJSModule.SetValue(file.Name, file.Cotent);
+            }
+            else
+            {
                 await TryJSModule.SetValue(file.Name, file.Cotent);
             }
 
