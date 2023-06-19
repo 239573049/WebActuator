@@ -4,8 +4,8 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>D:\.NET\web-actuator\examples\Examples.WebAssembly\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
-    <History>False|2023-06-19T08:49:28.3719292Z;False|2023-06-19T16:46:32.4453970+08:00;True|2023-06-10T21:11:29.8909508+08:00;True|2023-06-10T20:23:50.2483534+08:00;</History>
+    <_PublishTargetUrl>D:\.NET Core\web-actuator\examples\Examples.WebAssembly\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
+    <History>True|2023-06-19T08:59:52.6745160Z;False|2023-06-19T16:49:28.3719292+08:00;False|2023-06-19T16:46:32.4453970+08:00;True|2023-06-10T21:11:29.8909508+08:00;True|2023-06-10T20:23:50.2483534+08:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

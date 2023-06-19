@@ -1,7 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Text;
+﻿using System.Text;
+using Microsoft.CodeAnalysis;
 
-namespace MonacoRoslynCompletionProvider.Api
+namespace Examples.Service.MonacoRoslynCompletionProvider.Api
 {
     public abstract class HoverInfoBuilder
     {

@@ -1,18 +1,13 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel;
+using System.Data;
+using System.Reflection;
+using System.Xml;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     public class CompletionWorkspace
     {

@@ -1,12 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Examples.Service.MonacoRoslynCompletionProvider.Api;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using MonacoRoslynCompletionProvider.Api;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     internal class HoverInformationProvider
     {

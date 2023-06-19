@@ -1,12 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Examples.Service.MonacoRoslynCompletionProvider.Api;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
-using MonacoRoslynCompletionProvider.Api;
 //using MonacoRoslynCompletionProvider.RoslynPad;
 //using RoslynPad.Roslyn.QuickInfo;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     public class CompletionDocument
     {

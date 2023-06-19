@@ -1,6 +1,6 @@
-﻿using MonacoRoslynCompletionProvider.Api;
+﻿using Examples.Service.MonacoRoslynCompletionProvider.Api;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     public static class CompletitionRequestHandler
     {

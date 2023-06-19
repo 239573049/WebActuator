@@ -1,12 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Examples.Service.MonacoRoslynCompletionProvider.Api;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using MonacoRoslynCompletionProvider.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     internal class SignatureHelpProvider
     {

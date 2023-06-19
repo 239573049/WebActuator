@@ -1,6 +1,6 @@
-using MonacoRoslynCompletionProvider.Api;
-using MonacoRoslynCompletionProvider;
 using System.Text.Json;
+using Examples.Service.MonacoRoslynCompletionProvider;
+using Examples.Service.MonacoRoslynCompletionProvider.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 

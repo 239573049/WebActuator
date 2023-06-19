@@ -285,6 +285,26 @@ internal class MultiplexingTextWriter : TextWriter
         return GetCurrentWriter().WriteLineAsync(buffer, index, count);
     }
 
+    public override void WriteLine(ReadOnlySpan<char> buffer)
+    {
+        GetCurrentWriter().WriteLine(buffer);
+    }
+
+    public override void Write(ReadOnlySpan<char> buffer)
+    {
+        GetCurrentWriter().Write(buffer);
+    }
+
+    public override void Write(StringBuilder value)
+    {
+        GetCurrentWriter().Write(value);
+    }
+
+    public override void WriteLine(StringBuilder value)
+    {
+        GetCurrentWriter().WriteLine(value);
+    }
+
     public override Task WriteLineAsync(string value)
     {
         return GetCurrentWriter().WriteLineAsync(value);

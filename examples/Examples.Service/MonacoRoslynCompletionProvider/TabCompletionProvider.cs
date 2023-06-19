@@ -1,10 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Examples.Service.MonacoRoslynCompletionProvider.Api;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
-using MonacoRoslynCompletionProvider.Api;
-using System;
-using System.Threading.Tasks;
 
-namespace MonacoRoslynCompletionProvider
+namespace Examples.Service.MonacoRoslynCompletionProvider
 {
     internal class TabCompletionProvider
     {
