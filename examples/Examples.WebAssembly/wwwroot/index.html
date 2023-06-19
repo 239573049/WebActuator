@@ -24,12 +24,94 @@
             s.parentNode.insertBefore(hm, s);
         })();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/axios.min.js"></script>
+    <style>
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .loader-inner {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #ccc;
+            animation: loader-rotate 2s linear infinite;
+        }
+
+        .loader-inner::before,
+        .loader-inner::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+        }
+
+        .loader-inner::before {
+            border-top-color: #3498db;
+            animation: loader-before 2s ease-in-out infinite;
+        }
+
+        .loader-inner::after {
+            border-bottom-color: #3498db;
+            animation: loader-after 2s ease-in-out infinite;
+        }
+
+        @keyframes loader-rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes loader-before {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes loader-after {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+    </style>
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
