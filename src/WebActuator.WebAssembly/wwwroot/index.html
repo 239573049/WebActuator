@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>在线编辑器</title>
+    <base href="/" />
+    <style>
+        #editor {
+            width: 100%;
+            height: 90%;
+        }
+
+        #output {
+            width: 100%;
+            height: 9%;
+            border: 1px solid #ccc;
+            overflow: auto;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .run-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="editor"></div>
+    <div id="output"></div>
+    <button class="run-button">运行</button>
+    <script>
+        var require = { paths: { 'vs': 'https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs' } };
+    </script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/loader.js"></script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/editor/editor.main.nls.js"></script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/editor/editor.main.js"></script>
+
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script type="module">
+        import { BrotliDecode } from './decode.min.js';
+        import * as exportManage from './exportManage.js';
+        window.exportManage = exportManage;
+
+        var editor = monaco.editor.create(document.getElementById('editor'), {
+            value: `using System;
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        Console.WriteLine("Hello World!");
+        
+    }
+}`,
+            language: 'csharp',
+            theme: 'vs-dark',
+            automaticLayout: true,
+
+        });
+
+        var runButton = document.querySelector('.run-button');
+
+        let output = document.getElementById('output');
+
+        // 定义控制台输出
+        window.OnWriteLine = (message) => {
+            output.innerHTML += `<span>${message}</span>` + '<br/>';
+
+        }
+
+        // 定义控制台输出
+        window.OnDiagnostic = (message) => {
+            output.innerHTML += `<span>${message}</span>` + '<br/>';
+        }
+
+        // 定义首次执行标记
+        let start = false;
+        // 定义编译器需要以来的程序集
+        let assemblys = ["https://assembly.tokengo.top:8843/System.dll",
+            "https://assembly.tokengo.top:8843/System.Buffers.dll",
+            "https://assembly.tokengo.top:8843/System.Collections.dll",
+            "https://assembly.tokengo.top:8843/System.Core.dll",
+            "https://assembly.tokengo.top:8843/System.Linq.Expressions.dll",
+            "https://assembly.tokengo.top:8843/System.Linq.Parallel.dll",
+            "https://assembly.tokengo.top:8843/mscorlib.dll",
+            "https://assembly.tokengo.top:8843/System.Linq.dll",
+            "https://assembly.tokengo.top:8843/System.Console.dll",
+            "https://assembly.tokengo.top:8843/System.Runtime.dll",
+            "https://assembly.tokengo.top:8843/System.Net.Http.dll",
+            "https://assembly.tokengo.top:8843/System.Private.CoreLib.dll",
+            "https://assembly.tokengo.top:8843/System.Console.dll"]
+
+        runButton.addEventListener('click', async () => {
+            if (start === false) {
+                // 初始化编译器
+                start = true;
+                await window.exportManage.SetReferences(assemblys);
+            }
+            // 获取编辑器内容
+            let code = editor.getValue();
+            console.log(code);
+            // 编译代码
+            await window.exportManage.RunSubmission(code, false);
+
+        });
+
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                if (type !== 'dotnetjs' && false) {
+                    return (async function () {
+                        const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        const originalResponseBuffer = await response.arrayBuffer();
+                        const originalResponseArray = new Int8Array(originalResponseBuffer);
+                        const decompressedResponseArray = BrotliDecode(originalResponseArray);
+                        const contentType = type ===
+                            'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
+                        return new Response(decompressedResponseArray,
+                            { headers: { 'content-type': contentType } });
+                    })();
+                }
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>

@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 namespace WebActuator;
 public class ReferenceManage
 {
-    private readonly static ConcurrentDictionary<string, MetadataReference> _references = new();
+    private static readonly ConcurrentDictionary<string, MetadataReference> _references = new();
 
     public static MetadataReference[] References => _references.Select(x => x.Value).ToArray();
 
