@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.WebAssembly", "exa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.Service", "examples\Examples.Service\Examples.Service.csproj", "{AB3E5D3D-203A-49D9-847F-0DD0C3452FED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebActuator.WebAssembly", "src\WebActuator.WebAssembly\WebActuator.WebAssembly.csproj", "{9369090E-0D76-4AB8-AAF7-09D5AC06A1A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebActuator.WebAssembly", "src\WebActuator.WebAssembly\WebActuator.WebAssembly.csproj", "{9369090E-0D76-4AB8-AAF7-09D5AC06A1A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
