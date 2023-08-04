@@ -5,7 +5,7 @@ export class IndexedDB {
     constructor(name: string, version: number, private objectStoreName: string) {
         const request: IDBOpenDBRequest = window.indexedDB.open(name, version);
 
-        request.onerror = (event) => {
+        request.onerror = (_) => {
             console.log(`数据库打开报错`);
         };
 
@@ -30,12 +30,12 @@ export class IndexedDB {
                 .add(data, data.key);
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     console.log('写入数据成功',);
                     resolve(request?.result);
                 }
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     console.log('写入数据失败',);
                     reject(request?.result);
                 }
@@ -54,12 +54,12 @@ export class IndexedDB {
             const request: IDBRequest<any> | undefined = objectStore?.get(key);
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     console.log('读取数据成功');
                     resolve(request?.result);
                 }
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     console.log('读取数据失败，未找到数据');
                     reject(request?.result);
                 }
@@ -76,12 +76,12 @@ export class IndexedDB {
             const request = objectStore?.getAll();
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     console.log('读取数据成功',);
                     resolve(request?.result);
                 }
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     console.log('读取数据失败，未找到数据');
                     reject(request?.result);
                 }
@@ -99,12 +99,12 @@ export class IndexedDB {
                 .put(data, key);
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     console.log('更新数据成功',);
                     resolve(request?.result);
                 }
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     console.log('更新数据失败，未找到数据');
                     reject(request?.result);
                 }
@@ -124,12 +124,12 @@ export class IndexedDB {
                 .delete(key);
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     console.log('删除数据成功',);
                     resolve(request?.result);
                 }
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     console.log('删除数据失败，未找到数据');
                     reject(request?.result);
                 }
@@ -154,11 +154,11 @@ export class IndexedDB {
                 .get(key);
 
             if (request) {
-                request!.onsuccess = (event) => {
+                request!.onsuccess = (_) => {
                     resolve(request?.result);
                 };
 
-                request!.onerror = (event) => {
+                request!.onerror = (_) => {
                     reject(request?.result);
                 }
             } else {

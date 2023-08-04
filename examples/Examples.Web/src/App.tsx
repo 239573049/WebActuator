@@ -4,6 +4,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { lazy, Suspense } from 'react'
+import Loading from './compontents/loading';
 
 const MainLayout = lazy(() => import('./layouts/mian-layout/index'))
 const Home = lazy(() => import('./pages/home/index'))
@@ -16,13 +17,16 @@ const router = createBrowserRouter([
   {
     path: "/",
     element:
-      <Suspense fallback={'加载'}>
+      <Suspense fallback={<Loading />}>
         <MainLayout />
       </Suspense>,
     children: [
       {
         path: "",
-        element: <Home />,
+        element: 
+        <Suspense fallback={<Loading />}>
+          <Home />
+        </Suspense>,
       }
     ],
   }

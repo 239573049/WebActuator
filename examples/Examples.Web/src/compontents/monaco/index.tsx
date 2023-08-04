@@ -1,26 +1,14 @@
 import { Component } from 'react';
 import * as monaco from 'monaco-editor';
+
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+// import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+// import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+// import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import axios from 'axios';
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
-        if (label === 'json') {
-            return new jsonWorker()
-        }
-        if (label === 'css' || label === 'scss' || label === 'less') {
-            return new cssWorker()
-        }
-        if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return new htmlWorker()
-        }
-        if (label === 'typescript' || label === 'javascript') {
-            return new tsWorker()
-        }
         return new editorWorker()
     }
 }
@@ -166,12 +154,13 @@ monaco.editor.onDidCreateModel(function (model) {
 });
 
 async function sendRequest(type: any, request: any) {
-    let endPoint= null as any;
+    let endPoint = null as any;
+
     switch (type) {
-        case 'complete': endPoint = 'http://localhost:5102/completion/complete'; break;
-        case 'signature': endPoint = 'http://localhost:5102/completion/signature'; break;
-        case 'hover': endPoint = 'http://localhost:5102/completion/hover'; break;
-        case 'codeCheck': endPoint = 'http://localhost:5102/completion/codeCheck'; break;
+        case 'complete': endPoint = 'completion/complete'; break;
+        case 'signature': endPoint = 'completion/signature'; break;
+        case 'hover': endPoint = 'completion/hover'; break;
+        case 'codeCheck': endPoint = 'completion/codeCheck'; break;
     }
     return await axios.post(endPoint, JSON.stringify(request))
 }

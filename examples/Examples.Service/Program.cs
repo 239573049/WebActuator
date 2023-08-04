@@ -18,20 +18,34 @@ builder.Services.AddMemoryCache()
 
 builder.Services.AddEndpointsApiExplorer();
 
-var app = builder.AddServices();
+var app = builder.Build();
+
+app.Use((async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        // 获取wwwroot下默认'index.html'
+        context.Request.Path = "/index.html";
+        await next(context);
+    }
+    else
+    {
+        await next(context);
+    }
+} ));
 
 app.UseCors("CorsPolicy");
 
 var types = new FileExtensionContentTypeProvider();
 
 types.Mappings.Add(".dll", "application/octet-stream");
+types.Mappings.Add(".br", "application/octet-stream");
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    ContentTypeProvider = types
+    ContentTypeProvider = types,
 });
 
-app.UseStaticFiles();
 
 app.MapPost("/completion/{0}", async (e) =>
 {

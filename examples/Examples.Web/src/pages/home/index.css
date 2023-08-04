@@ -63,8 +63,9 @@
 
 .Pane1{
   min-height: 500px !important;
+  max-height: calc(100vh - 200px);
 }
 .Pane2{
   height:200px !important;
-  max-height: 400px !important;
+  min-height: 100px;
 }

@@ -1,5 +1,4 @@
-import * as React from 'react';
-import SplitPane from 'react-split-pane';
+import React, { lazy, Suspense } from 'react';
 import './index.css';
 import SMonaco from '../../compontents/monaco';
 import * as monaco from 'monaco-editor';
@@ -7,7 +6,10 @@ import { FileService } from '../../services/fileService';
 import { IconTreeTriangleRight } from '@douyinfe/semi-icons';
 
 import PubSub from 'pubsub-js'
-import { Button, Spin, TabPane, Tabs } from '@douyinfe/semi-ui';
+import { Button, Spin } from '@douyinfe/semi-ui';
+import Loading from '../../compontents/loading';
+
+const SplitPane = lazy(() => import('react-split-pane'))
 
 var start = false;
 
@@ -136,7 +138,8 @@ class App extends React.Component<IProps, State> {
                 const { assemblys } = this.state;
 
                 const a = assemblys.map((item) => {
-                    return "http://localhost:5102/assembly/" + item + ".dll";
+
+                    return location.protocol + "//" + location.host + "/assembly/" + item + ".dll";
                 })
                 // @ts-ignore
                 await window.exportManage.SetReferences(a);
@@ -196,10 +199,10 @@ class App extends React.Component<IProps, State> {
                 </div>
                 <div>
                     <SplitPane style={{
-                        height: "calc(100vh - 38px)",
+                        height: "calc(100vh - 38px)"
                     }} split="horizontal"  >
                         <SMonaco ref={this.monaco} value={code} language='csharp' />
-                        <div  ref={this.outputRef} style={{
+                        <div ref={this.outputRef} style={{
                             height: "100%",
                             width: "100%",
                             overflow: "auto",

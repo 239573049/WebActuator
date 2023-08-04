@@ -6,3 +6,7 @@ riderModule.iml
 /.vs
 /.idea
 /.vscode
+/examples/Examples.Service/wwwroot/logo.png
+/examples/Examples.Service/wwwroot/_framework
+/examples/Examples.Service/wwwroot/assets
+/examples/Examples.Service/wwwroot/index.html

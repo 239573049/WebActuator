@@ -121,7 +121,7 @@ class Program
     // 等待1s
     setTimeout(async () => {
       await this.getDir();
-    }, 100);
+    }, 500);
   }
 
   componentWillUnmount(): void {
