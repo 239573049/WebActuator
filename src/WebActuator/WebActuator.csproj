@@ -32,4 +32,11 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="token.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
+
 </Project>

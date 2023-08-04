@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <History>True|2023-08-04T09:50:03.8717565Z;False|2023-08-04T17:47:48.4613892+08:00;False|2023-08-04T17:45:18.9010536+08:00;False|2023-08-04T17:42:33.8226563+08:00;False|2023-08-04T17:41:26.9322786+08:00;False|2023-08-04T17:40:45.9513297+08:00;False|2023-08-04T17:38:45.2235457+08:00;False|2023-08-04T17:37:59.0229402+08:00;</History>
+    <LastFailureDetails />
+    <_PublishTargetUrl>D:\.NET Core\web-actuator\src\WebActuator.WebAssembly\bin\Release\net8.0\browser-wasm\publish\</_PublishTargetUrl>
+  </PropertyGroup>
+</Project>

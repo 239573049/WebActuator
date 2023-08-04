@@ -24,6 +24,10 @@
   width: 100%;
 }
 
+.SplitPane{
+  position: inherit !important;
+}
+
 .Resizer.horizontal:hover {
   border-top: 5px solid rgba(0, 0, 0, 0.5);
   border-bottom: 5px solid rgba(0, 0, 0, 0.5);
@@ -54,6 +58,13 @@
 }
 
 .output-panel {
-  padding: 20px;
-  overflow: auto;
+  padding: 5px;
+}
+
+.Pane1{
+  min-height: 500px !important;
+}
+.Pane2{
+  height:200px !important;
+  max-height: 400px !important;
 }

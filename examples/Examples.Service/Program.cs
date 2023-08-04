@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Examples.Service.MonacoRoslynCompletionProvider;
 using Examples.Service.MonacoRoslynCompletionProvider.Api;
+using Microsoft.AspNetCore.StaticFiles;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,17 @@ builder.Services.AddEndpointsApiExplorer();
 var app = builder.AddServices();
 
 app.UseCors("CorsPolicy");
+
+var types = new FileExtensionContentTypeProvider();
+
+types.Mappings.Add(".dll", "application/octet-stream");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = types
+});
+
+app.UseStaticFiles();
 
 app.MapPost("/completion/{0}", async (e) =>
 {
@@ -58,6 +71,7 @@ app.MapPost("/completion/{0}", async (e) =>
 
     e.Response.StatusCode = 405;
 });
+
 
 app.Run();
  
