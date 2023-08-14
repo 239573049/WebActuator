@@ -10,29 +10,30 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/semi-icons.css">
     <script type="module">
       import { BrotliDecode } from './decode.min.js';
       import * as exportManage from './exportManage.js';
       window.exportManage = exportManage;
-      Blazor.start({
-          loadBootResource: function (type, name, defaultUri, integrity) {
-              if (type !== 'dotnetjs' ) {
-                  return (async function () {
-                      const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
-                      if (!response.ok) {
-                          throw new Error(response.statusText);
-                      }
-                      const originalResponseBuffer = await response.arrayBuffer();
-                      const originalResponseArray = new Int8Array(originalResponseBuffer);
-                      const decompressedResponseArray = BrotliDecode(originalResponseArray);
-                      const contentType = type ===
-                          'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
-                      return new Response(decompressedResponseArray,
-                          { headers: { 'content-type': contentType } });
-                  })();
-              }
-          }
-      });
+    //   Blazor.start({
+    //       loadBootResource: function (type, name, defaultUri, integrity) {
+    //           if (type !== 'dotnetjs' ) {
+    //               return (async function () {
+    //                   const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
+    //                   if (!response.ok) {
+    //                       throw new Error(response.statusText);
+    //                   }
+    //                   const originalResponseBuffer = await response.arrayBuffer();
+    //                   const originalResponseArray = new Int8Array(originalResponseBuffer);
+    //                   const decompressedResponseArray = BrotliDecode(originalResponseArray);
+    //                   const contentType = type ===
+    //                       'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
+    //                   return new Response(decompressedResponseArray,
+    //                       { headers: { 'content-type': contentType } });
+    //               })();
+    //           }
+    //       }
+    //   });
 
 
   </script>

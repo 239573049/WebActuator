@@ -1,8 +1,8 @@
+using System.Diagnostics;
 using System.Text.Json;
 using Examples.Service.MonacoRoslynCompletionProvider;
 using Examples.Service.MonacoRoslynCompletionProvider.Api;
 using Microsoft.AspNetCore.StaticFiles;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,7 +85,6 @@ app.MapPost("/completion/{0}", async (e) =>
 
     e.Response.StatusCode = 405;
 });
-
 
 app.Run();
  

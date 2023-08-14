@@ -76,17 +76,13 @@ public partial class Index : IDisposable
 
     private List<StorageFile> files = new();
 
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public string? Home { get; set; }
+    [SupplyParameterFromQuery] [Parameter] public string? Home { get; set; }
 
-    [Parameter]
-    public string? Code { get; set; }
+    [Parameter] public string? Code { get; set; }
 
     protected override void OnInitialized()
     {
         _objRef = DotNetObjectReference.Create(this);
-
     }
 
     [JSInvokable(nameof(RunCode))]
@@ -107,7 +103,6 @@ public partial class Index : IDisposable
 
             first = false;
         }
-
 
 
         ActuatorCompile.RunSubmission(value, onOutput: OnOutput, OnError, diagnostic =>
@@ -177,7 +172,8 @@ public partial class Index : IDisposable
                 files.Add(new StorageFile()
                 {
                     Name = "HelloWorld.cs",
-                    Cotent = "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+                    Cotent =
+                        "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
                     CreatedTime = DateTime.Now
                 });
 
@@ -192,7 +188,8 @@ public partial class Index : IDisposable
             {
                 try
                 {
-                    var code = await GlobalManage.HttpClient.GetStringAsync("https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code?key=" + Code);
+                    var code = await GlobalManage.HttpClient.GetStringAsync(
+                        "https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code?key=" + Code);
                     if (!string.IsNullOrEmpty(code))
                     {
                         await Monaco.SetValueAsync(code);
@@ -207,7 +204,6 @@ public partial class Index : IDisposable
             {
                 await InitMonacoData();
             }
-
         }
     }
 
@@ -235,8 +231,12 @@ public partial class Index : IDisposable
     {
         try
         {
-            await using var stream = await GlobalManage.HttpClient.GetStreamAsync(v);
-            ReferenceManage.AddReference(v, MetadataReference.CreateFromStream(stream));
+            // await using var stream = await GlobalManage.HttpClient.GetStreamAsync(v);
+            // ReferenceManage.AddReference(v, MetadataReference.CreateFromStream(stream));
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                ReferenceManage.AddReference(assembly.Location, MetadataReference.CreateFromFile(assembly.Location));
+            }
         }
         catch
         {
@@ -286,7 +286,8 @@ public partial class Index : IDisposable
         var file = new StorageFile()
         {
             Name = newFileName,
-            Cotent = "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
+            Cotent =
+                "using System;\r\ninternal class Program\r\n{\r\n    private static void Main(string[] args)\r\n    {\r\n        Console.WriteLine(\"Hello World!\");\r\n    }\r\n}",
             CreatedTime = DateTime.Now
         };
 
@@ -316,17 +317,17 @@ public partial class Index : IDisposable
             {
                 await TryJSModule.SetValue(file.Name, file.Cotent);
             }
-
         }
     }
 
     private async Task CreateCodeSharedAsync()
     {
         var code = await Monaco.GetValueAsync();
-        var result = await GlobalManage.HttpClient.PostAsJsonAsync("https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code", new
-        {
-            code,
-        });
+        var result = await GlobalManage.HttpClient.PostAsJsonAsync(
+            "https://web-actuator-api.tokengo.top:8843/api/v1/CodeManages/Code", new
+            {
+                code,
+            });
 
         if (result.IsSuccessStatusCode)
         {
@@ -357,6 +358,7 @@ public partial class Index : IDisposable
         {
             return;
         }
+
         await TryJSModule.RemoveValue(file.Name);
         files.Remove(file);
         await SaveFile();

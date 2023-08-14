@@ -6,8 +6,7 @@ import { FileService } from '../../services/fileService';
 import { IconTreeTriangleRight } from '@douyinfe/semi-icons';
 
 import PubSub from 'pubsub-js'
-import { Button, Spin } from '@douyinfe/semi-ui';
-import Loading from '../../compontents/loading';
+import { Button, Select, Spin } from '@douyinfe/semi-ui';
 
 const SplitPane = lazy(() => import('react-split-pane'))
 
@@ -188,6 +187,7 @@ class App extends React.Component<IProps, State> {
                     <div style={{
                         float: "right",
                     }}>
+
                         <div style={{
                             height: "100%",
                             width: "fit-content",
