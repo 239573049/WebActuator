@@ -162,10 +162,10 @@ public partial class Index : IDisposable
             {
                 await Task.Delay(100);
 
-                await TryJSModule.Init();
+                await TryJsModule.Init();
             });
 
-            var result = await TryJSModule.GetValue("files");
+            var result = await TryJsModule.GetValue("files");
 
             if (string.IsNullOrEmpty(result))
             {
@@ -212,7 +212,7 @@ public partial class Index : IDisposable
         var name = files.FirstOrDefault()?.Name;
         if (!string.IsNullOrEmpty(name))
         {
-            await Monaco.SetValueAsync(await TryJSModule.GetValue(name));
+            await Monaco.SetValueAsync(await TryJsModule.GetValue(name));
         }
 
         selectStorageFile = files.FirstOrDefault();
@@ -223,7 +223,7 @@ public partial class Index : IDisposable
         _ = Task.Run(async () =>
         {
             await Task.Delay(50);
-            await TryJSModule.RenderScroll();
+            await TryJsModule.RenderScroll();
         });
     }
 
@@ -256,7 +256,7 @@ public partial class Index : IDisposable
 
     private async Task Goto(string url)
     {
-        await JSruntime.InvokeVoidAsync("open", url);
+        await JsRuntime.InvokeVoidAsync("open", url);
     }
 
     private async Task SetValue(StorageFile file)
@@ -269,7 +269,7 @@ public partial class Index : IDisposable
         else
         {
             selectStorageFile = file;
-            var result = await TryJSModule.GetValue(file.Name);
+            var result = await TryJsModule.GetValue(file.Name);
             file.Cotent = result;
             await Monaco.SetValueAsync(result);
         }
@@ -300,7 +300,7 @@ public partial class Index : IDisposable
 
     private async Task SaveFile()
     {
-        await TryJSModule.SetValue("files", files.Select(x => new
+        await TryJsModule.SetValue("files", files.Select(x => new
         {
             x.Name,
             x.CreatedTime
@@ -311,11 +311,11 @@ public partial class Index : IDisposable
             if (file.Name == selectStorageFile?.Name)
             {
                 file.Cotent = value;
-                await TryJSModule.SetValue(file.Name, file.Cotent);
+                await TryJsModule.SetValue(file.Name, file.Cotent);
             }
             else
             {
-                await TryJSModule.SetValue(file.Name, file.Cotent);
+                await TryJsModule.SetValue(file.Name, file.Cotent);
             }
         }
     }
@@ -331,10 +331,10 @@ public partial class Index : IDisposable
 
         if (result.IsSuccessStatusCode)
         {
-            var href = await TryJSModule.GetHref();
+            var href = await TryJsModule.GetHref();
 
             // 设置粘贴板
-            await TryJSModule.SetClipboard(href + await result.Content.ReadAsStringAsync());
+            await TryJsModule.SetClipboard(href + await result.Content.ReadAsStringAsync());
 
             await PopupService.EnqueueSnackbarAsync(new Masa.Blazor.Presets.SnackbarOptions()
             {
@@ -359,7 +359,7 @@ public partial class Index : IDisposable
             return;
         }
 
-        await TryJSModule.RemoveValue(file.Name);
+        await TryJsModule.RemoveValue(file.Name);
         files.Remove(file);
         await SaveFile();
     }

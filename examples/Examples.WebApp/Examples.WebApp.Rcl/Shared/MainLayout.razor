@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<MApp>
+    <MAppBar Height="40" App Class="app-title">
+        <MAvatar Style="margin-left: 8px;margin-top: 3px;" Height="35" Width="35" MinWidth="35">
+            <MImage Src="/csharp.png"></MImage>
+        </MAvatar>
+        <MSpacer></MSpacer>
+        <MButton Small Text>
+            <MIcon>mdi-bug-play</MIcon>
+        </MButton>
+    </MAppBar>
+    <MMain>
+        <!-- 给应用提供合适的间距 -->
+        <MContainer Fluid Style="height: 100%;background-color: var(--main-bg01-color)">
+            @Body
+        </MContainer>
+    </MMain>
+</MApp>
+
+<style>
+    html {
+        overflow: hidden;
+    }
+</style>

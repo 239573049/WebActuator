@@ -1,10 +1,10 @@
-﻿@page "/{Code?}"
+﻿@page "/"
 @namespace Examples.Shared
-@inject IJSRuntime JSruntime
+@inject IJSRuntime JsRuntime
 @inject IPopupService PopupService
-@inject TryJSModule TryJSModule
+@inject TryJSModule TryJsModule
 
-<MNavigationDrawer @bind-Value="_drawer"
+<MNavigationDrawer 
                           App
                           Permanent
                           Floating
